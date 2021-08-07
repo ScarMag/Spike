@@ -73,20 +73,25 @@ char editorReadKey() {
 
 // Queries the terminal for the position of the cursor */
 int getCursorPosition(int *rows, int *cols) {
-
+  char buf[32];
+  unsigned int i = 0;
+  
   /* "n" queries the terminal for status information while 
    * "6" asks for the cursor position */
   if (write(STDOUT_FILENO, "\x1b[6n", 4) != 4) return -1;
 
-  printf("\r\n");
-  char c;
-  while (read(STDIN_FILENO, &c, 1) == 1) {
-    if (iscntrl(c)) {
-      printf("%d\r\n", c);
-    } else {
-      printf("%d ('%c')\r\n", c, c);
-    }
+  while (i < sizeof(buf) - 1) {
+    if (read(STDIN_FILENO, &buf[i], 1) != 1) break;
+    if (buf[i] == 'R') break;
+    i++;
   }
+
+  /* Appends '\0' to the end of the string to determine where 
+   * it terminates */
+  buf[i] = '\0';
+
+  /* Excludes the escape sequence from printing */
+  printf("\r\n&buf[1]: '%s'\r\n", &buf[1]);
 
   editorReadKey();
 
