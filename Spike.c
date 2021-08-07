@@ -117,6 +117,16 @@ int getWindowSize(int *rows, int *cols) {
   }
 }
 
+/* =============== Append Buffer =============== */
+
+/* Creating our own dynamic string type that only supports appending */
+struct abuf {
+  char *b;
+  int len;
+};
+
+#define ABUF_INIT {NULL, 0}
+
 /* =============== Output =============== */
 
 void editorDrawRows() {
