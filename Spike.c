@@ -129,7 +129,7 @@ struct abuf {
 /* Constructor for the abuf type */ 
 #define ABUF_INIT {NULL, 0}
 
-/* Appends a string to an abuf (our dynamic string type) */
+/* Appends a string to an abuf type (our dynamic string type) */
 void abAppend(struct abuf *ab, const char *s, int len) {
 
   /* Allocates a block of memory that is the size of the current 
@@ -144,7 +144,7 @@ void abAppend(struct abuf *ab, const char *s, int len) {
   ab->len += len;
 }
 
-/* Destructor that deallocates the dynamic memory used by an abuf */
+/* Destructor that deallocates the dynamic memory used by an abuf type*/
 void abFree(struct abuf *ab) {
   free(ab->b);
 }
@@ -165,13 +165,15 @@ void editorDrawRows(struct abuf *ab) {
 /* Sets up the editing environment */
 void editorRefreshScreen() {
   struct abuf ab = ABUF_INIT;
-  
+
+  abAppend(&ab, "\x1b[?25l", 6);    /* Hides the cursor */
   abAppend(&ab, "\x1b[2J", 4);
   abAppend(&ab, "\x1b[H", 3);
 
   editorDrawRows(&ab);
 
   abAppend(&ab, "\x1b[H", 3);
+  abAppend(&ab, "\x1b[25h", 6);    /* Shows the cursor */
 
   /* Writes the buffer's content out to standard output */
   write(STDOUT_FILENO, ab.b, ab.len);
