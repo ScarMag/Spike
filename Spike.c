@@ -34,7 +34,7 @@ void die(const char *s) {
 
   /* Repositions the cursor */
   write(STDOUT_FILENO, "\x1b[H", 3);         /* Creates an escape sequence when combined 
-					      * with other bytes (VT100 escape sequence */
+					      * with other bytes (VT100 escape sequence) */
   perror(s);
   exit(1);
 }
@@ -87,15 +87,18 @@ int getCursorPosition(int *rows, int *cols) {
   }
 
   /* Appends '\0' to the end of the string to determine where 
-   * it terminates */
+   * it terminates when using printf() */
   buf[i] = '\0';
 
-  /* Excludes the escape sequence from printing */
-  printf("\r\n&buf[1]: '%s'\r\n", &buf[1]);
+  /* Makes sure that we are dealing with an escape sequence */
+  if (buf[0] != '\x1b' || buf[1] != '[') return -1;
 
-  editorReadKey();
+  /* Parses a string of the form %d;%d, which contains two
+   * integers separated by a semicolon. The parsed values 
+   * are then put into the rows and cols variables */
+  if (sscanf(&buf[2], "%d;%d", rows, cols) != 2) return -1;
 
-  return -1;
+  return 0;
 }
 
 /* Sets the parameters to the height and width of the terminal window */
