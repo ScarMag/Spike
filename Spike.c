@@ -119,12 +119,13 @@ int getWindowSize(int *rows, int *cols) {
 
 /* =============== Append Buffer =============== */
 
-/* Creating our own dynamic string type that only supports appending */
+/* Creating a dynamic string type that only supports appending */
 struct abuf {
   char *b;
   int len;
 };
 
+/* Constructor for the abuf type */ 
 #define ABUF_INIT {NULL, 0}
 
 /* =============== Output =============== */
