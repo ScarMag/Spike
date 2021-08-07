@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <unistd.h>
@@ -127,6 +128,26 @@ struct abuf {
 
 /* Constructor for the abuf type */ 
 #define ABUF_INIT {NULL, 0}
+
+/* Appends a string to an abuf (our dynamic string type) */
+void abAppend(struct abuf *ab, const char *s, int len) {
+
+  /* Allocates a block of memory that is the size of the current 
+   * string + the size of the new string being appended */
+  char *new = realloc(ab->b, ab->len + len);
+
+  if (new == NULL) return;
+
+  /* Copies the new string, s, after the end of the current string */
+  memcpy(&new[ab->len], s, len);
+  ab->b = new;
+  ab->len += len;
+}
+
+/* Destructor that deallocates the dynamic memory used by an abuf */
+void abFree(struct abuf *ab) {
+  free(ab->b);
+}
 
 /* =============== Output =============== */
 
