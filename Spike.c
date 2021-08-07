@@ -1,4 +1,5 @@
-/*** includes ***/
+// Step 30
+/* =============== Includes =============== */
 
 #include <ctype.h>
 #include <errno.h>
@@ -8,13 +9,13 @@
 #include <termios.h>
 #include <unistd.h>
 
-/*** defines ***/
+/* =============== Defines =============== */
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
-/*** data ***/
+/* =============== Data =============== */
 
-// Stores the state of our editor
+/* Stores the state of the editor */
 struct editorConfig {
   int screenrows;
   int screencols;
@@ -23,25 +24,29 @@ struct editorConfig {
 
 struct editorConfig E;
 
-/*** terminal ***/
+/* =============== Terminal =============== */
 
-// Error handling
+/* Error handling */
 void die(const char *s) {
-  write(STDOUT_FILENO, "\x1b[2J", 4);
-  write(STDOUT_FILENO, "\x1b[H", 3);
-  
+
+  /* Clears the screen */ 
+  write(STDOUT_FILENO, "\x1b[2J", 4);        /* "\x1b" is an escape character */
+
+  /* Repositions the cursor */
+  write(STDOUT_FILENO, "\x1b[H", 3);         /* Creates an escape sequence when combined 
+					      * with other bytes (VT100 escape sequence */
   perror(s);
   exit(1);
 }
 
-// Restores terminal's original attributes
+/* Restores terminal's original attributes */
 void disableRawMode() {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == -1) {
     die("tcsetattr");
   }
 }
 
-// Disables unwanted features/keypresses (echo, Ctrl-'x') 
+/* Disables unwanted features/keypresses (echo, Ctrl-'x') */ 
 void enableRawMode() {
   if (tcgetattr(STDIN_FILENO, &E.orig_termios) == -1) die("tcgetattr");
   atexit(disableRawMode);
@@ -66,6 +71,7 @@ char editorReadKey() {
   return c;
 }
 
+/* Sets the parameters to the height and width of the terminal window */
 int getWindowSize(int *rows, int *cols) {
   struct winsize ws;
 
@@ -80,7 +86,7 @@ int getWindowSize(int *rows, int *cols) {
   }
 }
 
-/*** output ***/
+/* =============== Output =============== */
 
 void editorDrawRows() {
   int y;
@@ -89,7 +95,7 @@ void editorDrawRows() {
   }
 }
 
-// Sets up the editing environment
+/* Sets up the editing environment */
 void editorRefreshScreen() {
   write(STDOUT_FILENO, "\x1b[2J", 4);
   write(STDOUT_FILENO, "\x1b[H", 3);
@@ -99,7 +105,7 @@ void editorRefreshScreen() {
   write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
-/*** input ***/
+/* =============== Input =============== */
 
 void editorProcessKeypress() {
   char c = editorReadKey();
@@ -112,8 +118,8 @@ void editorProcessKeypress() {
       break;
   }
 }
- 
-/*** init ***/
+
+/* =============== Init =============== */
 
 void initEditor() {
   if (getWindowSize(&E.screenrows, &E.screencols) == -1) die("getWindowSize");
