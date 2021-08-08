@@ -71,7 +71,32 @@ char editorReadKey() {
   while ((nread = read(STDIN_FILENO, &c, 1)) != 1) {
     if (nread == -1 && errno != EAGAIN) die("read");
   }
-  return c;
+
+  if (c == '\x1b') {
+    char seq[3];
+
+    /* Reads 2 more bytes into the seq buffer to determine if
+     * it is an escape sequence or if the user just pressed the 
+     * Escape key */
+    if (read(STDIN_FILENO, &seq[0], 1) != 1) return '\x1b';
+    if (read(STDIN_FILENO, &seq[1], 1) != 1) return '\x1b';
+
+    /* Determines if the escape sequence is an arrow key 
+     * escape sequence. If it is, the corresponding w, a, s, d 
+     * character is returned */
+    if (seq[0] == '[') {
+      switch (seq[1]) {
+        case 'A': return 'w';
+        case 'B': return 's';
+        case 'C': return 'd';
+        case 'D': return 'a';
+      }
+    }
+
+    return '\x1b';
+  } else {
+    return c;
+  }
 }
 
 // Queries the terminal for the position of the cursor */
