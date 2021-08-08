@@ -166,6 +166,16 @@ void editorDrawRows(struct abuf *ab) {
       /* Truncates the length of the string to make sure it fits 
        * in the terminal */
       if (welcomelen > E.screencols) welcomelen = E.screencols;
+
+      /* Centers the welcome message by dividing the screen's width
+       * by 2, and then subtracting half of the message's length
+       * from that */
+      int padding = (E.screencols - welcomelen) / 2;
+      if (padding) {
+	abAppend(ab, "-_-", 3);
+	padding--;
+      }
+      while (padding--) abAppend(ab, " ", 1);
       abAppend(ab, welcome, welcomelen);
     } else {
       abAppend(ab, "-_-", 3);
