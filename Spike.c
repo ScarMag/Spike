@@ -12,6 +12,8 @@
 
 /* =============== Defines =============== */
 
+#define SPIKE_VERSION "0.0.1"
+
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 /* =============== Data =============== */
@@ -154,7 +156,20 @@ void abFree(struct abuf *ab) {
 void editorDrawRows(struct abuf *ab) {
   int y;
   for (y = 0; y < E.screenrows; y++) {
-    abAppend(ab, "-_-", 3);
+
+    /* Displays a welcome message */
+    if (y == E.screenrows / 3) {
+      char welcome[80];
+      int welcomelen = snprintf(welcome, sizeof(welcome),
+          "Spike editor -- version %s", SPIKE_VERSION);
+
+      /* Truncates the length of the string to make sure it fits 
+       * in the terminal */
+      if (welcomelen > E.screencols) welcomelen = E.screencols;
+      abAppend(ab, welcome, welcomelen);
+    } else {
+      abAppend(ab, "-_-", 3);
+    }
 
     abAppend(ab, "\x1b[K", 3);    /* Erases part of the current line */
     if (y < E.screenrows - 1) {
@@ -173,7 +188,7 @@ void editorRefreshScreen() {
   editorDrawRows(&ab);
 
   abAppend(&ab, "\x1b[H", 3);
-  abAppend(&ab, "\x1b[25h", 6);    /* Shows the cursor */
+  abAppend(&ab, "\x1b[25h", 6);     /* Shows the cursor */
 
   /* Writes the buffer's content out to standard output */
   write(STDOUT_FILENO, ab.b, ab.len);
