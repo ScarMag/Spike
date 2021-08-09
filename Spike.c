@@ -304,6 +304,14 @@ void editorProcessKeypress() {
       exit(0);
       break;
 
+    case HOME_KEY:
+      E.cx = 0;
+      break;
+
+    case END_KEY:
+      E.cx = E.screencols - 1;
+      break;
+      
     /* Simulates Page up/down by inputting ARROW_UP/DOWN many times */
     case PAGE_UP:
     case PAGE_DOWN:
