@@ -31,8 +31,10 @@ enum editorKey {
 
 /* =============== Data =============== */
 
-/* Data type for storing a row of text in the editor */
-typedef struct erow {    /* erow = "editor row" */
+/* Data type for storing a row of text in the editor. 
+ * typedef allows us to refer to the type as erow 
+ * instead of struct erow */
+typedef struct erow {    
   int size;
   char *chars;
 } erow;
@@ -42,6 +44,8 @@ struct editorConfig {
   int cx, cy;
   int screenrows;
   int screencols;
+  int numrows;
+  erow row;
   struct termios orig_termios;
 };
 
@@ -346,6 +350,7 @@ void editorProcessKeypress() {
 void initEditor() {
   E.cx = 0;
   E.cy = 0;
+  E.numrows = 0;
   
   if (getWindowSize(&E.screenrows, &E.screencols) == -1) die("getWindowSize");
 }
