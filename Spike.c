@@ -285,12 +285,24 @@ void editorProcessKeypress() {
   int c = editorReadKey();
   
   switch (c) {
-    case CTRL_KEY('q'):
+    case CTRL_KEY('q'):                      /* Exits the editor program */ 
       write(STDOUT_FILENO, "\x1b[2J", 4);
       write(STDOUT_FILENO, "\x1b[H", 3);
       exit(0);
       break;
 
+    /* Simulates Page up/down by inputting ARROW_UP/DOWN many times */
+    case PAGE_UP:
+    case PAGE_DOWN:
+      {
+        int times = E.screenrows;
+
+	/* ?: as a ternary operator -> "if a then b, otherwise c" */
+        while (times--)
+	  editorMoveCursor(c == PAGE_UP ? ARROW_UP : ARROW_DOWN);
+      }
+      break;
+      
     case ARROW_UP:
     case ARROW_DOWN:
     case ARROW_LEFT:
