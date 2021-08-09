@@ -281,6 +281,22 @@ void abFree(struct abuf *ab) {
 
 /* =============== Output =============== */
 
+/* Sets the value of E.rowoff */
+void editorScroll() {
+
+  /* Checks if the cursor is above the visible window. If so, scrolls
+   * up to where the cursor is */
+  if (E.cy < E.rowoff) {
+    E.rowoff = E.cy;
+  }
+
+  /* Checks if the cursor is below the visible window. If so, scrolls
+   * down to where the cursor is */
+  if (E.cy >= E.rowoff + E.screenrows) {
+    E.rowoff = E.cy - E.screenrows + 1;
+  }
+}
+
 void editorDrawRows(struct abuf *ab) {
   int y;
   for (y = 0; y < E.screenrows; y++) {
@@ -325,6 +341,8 @@ void editorDrawRows(struct abuf *ab) {
 
 /* Sets up the editing environment */
 void editorRefreshScreen() {
+  editorScroll();
+  
   struct abuf ab = ABUF_INIT;
 
   abAppend(&ab, "\x1b[?25l", 6);    /* Hides the cursor */
