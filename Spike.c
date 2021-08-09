@@ -31,6 +31,12 @@ enum editorKey {
 
 /* =============== Data =============== */
 
+/* Data type for storing a row of text in the editor */
+typedef struct erow {    /* erow = "editor row" */
+  int size;
+  char *chars;
+} erow;
+
 /* Stores the state of the editor */
 struct editorConfig {
   int cx, cy;
