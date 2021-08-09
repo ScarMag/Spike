@@ -198,6 +198,21 @@ int getWindowSize(int *rows, int *cols) {
   }
 }
 
+/* =============== Row Operations =============== */
+
+/* Initializes E.row */
+void editorAppendRow(char *s, size_t len) {
+  E.row.size = len;
+
+  /* Allocates a block of memory according to the size of the string */
+  E.row.chars = malloc(len + 1);
+  
+  /* Copies the string into the memory that was allocated */
+  memcpy(E.row.chars, s, len);
+  E.row.chars[len] = '\0';
+  E.numrows = 1;
+}
+
 /* =============== File I/O =============== */
 
 void editorOpen() {
@@ -221,15 +236,7 @@ void editorOpen() {
     while (linelen > 0 && (line[linelen - 1] == '\n' ||
 			   line[linelen - 1] == '\r'))
       linelen--;
-    E.row.size = linelen;
-
-    /* Allocates a block of memory according to the size of the string */
-    E.row.chars = malloc(linelen + 1);
-
-    /* Copies the string into the memory that was allocated */
-    memcpy(E.row.chars, line, linelen);
-    E.row.chars[linelen] = '\0';
-    E.numrows = 1;
+    editorAppendRow(line, linelen);
   }
   free(line);
   fclose(fp);
