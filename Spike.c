@@ -245,29 +245,34 @@ void abFree(struct abuf *ab) {
 void editorDrawRows(struct abuf *ab) {
   int y;
   for (y = 0; y < E.screenrows; y++) {
+    if (y >= E.numrows) {
+      /* Displays a welcome message */
+      if (y == E.screenrows / 3) {
+	char welcome[80];
+	int welcomelen = snprintf(welcome, sizeof(welcome),
+				  "Spike editor -- version %s", SPIKE_VERSION);
 
-    /* Displays a welcome message */
-    if (y == E.screenrows / 3) {
-      char welcome[80];
-      int welcomelen = snprintf(welcome, sizeof(welcome),
-          "Spike editor -- version %s", SPIKE_VERSION);
+	/* Truncates the length of the string to make sure it fits 
+	 * in the terminal */
+	if (welcomelen > E.screencols) welcomelen = E.screencols;
 
-      /* Truncates the length of the string to make sure it fits 
-       * in the terminal */
-      if (welcomelen > E.screencols) welcomelen = E.screencols;
-
-      /* Centers the welcome message by dividing the screen's width
-       * by 2, and then subtracting half of the message's length
-       * from that */
-      int padding = (E.screencols - welcomelen) / 2;
-      if (padding) {
+	/* Centers the welcome message by dividing the screen's width
+	 * by 2, and then subtracting half of the message's length
+	 * from that */
+	int padding = (E.screencols - welcomelen) / 2;
+	if (padding) {
+	  abAppend(ab, "-_-", 3);
+	  padding--;
+	}
+	while (padding--) abAppend(ab, " ", 1);
+	abAppend(ab, welcome, welcomelen);
+      } else {
 	abAppend(ab, "-_-", 3);
-	padding--;
       }
-      while (padding--) abAppend(ab, " ", 1);
-      abAppend(ab, welcome, welcomelen);
     } else {
-      abAppend(ab, "-_-", 3);
+      int len = E.row.size;
+      if (len > E.screencols) len = E.screencols;
+      abAppend(ab, E.row.chars, len);
     }
 
     abAppend(ab, "\x1b[K", 3);    /* Erases part of the current line */
