@@ -195,18 +195,38 @@ int getWindowSize(int *rows, int *cols) {
 /* =============== File I/O =============== */
 
 void editorOpen() {
-  char *line = "Hello, world!";
-  ssize_t linelen = 13;
+  FILE *fp = fopen(filename, "r");
+  if (!fp) die("fopen");
 
-  E.row.size = linelen;
+  char *line = NULL;
 
-  /* Allocates a block of memory according to the size of the string */
-  E.row.chars = malloc(linelen + 1);
+  /* A data type that is used to represent the size of objects
+   * in bytes */
+  size_t linecap = 0;    /* Line capacity */    
+  ssize_t linelen;       /* Signed version (can represent -1) */
 
-  /* Copies the string into the memory that was allocated */
-  memcpy(E.row.chars, line, linelen);
-  E.row.chars[linelen] = '\0';
-  E.numrows = 1;
+  /* Passing in a null line pointer and a linecap of 0, so that
+   * it allocates new memory for each line it reads. It sets line 
+   * to point to the memory and linecap to the amount of memory it
+   * allocated. Returns the length of the line read, or -1 if it is 
+   * at the end of a file */
+  linelen = getline(&line, &linecap, fp);
+  if (linelen != -1) {
+    while (linelen > 0 && (line[linelen - 1] == '\n' ||
+			   line[linelen - 1] == '\r'))
+      linelen--;
+    E.row.size = linelen;
+
+    /* Allocates a block of memory according to the size of the string */
+    E.row.chars = malloc(linelen + 1);
+
+    /* Copies the string into the memory that was allocated */
+    memcpy(E.row.chars, line, linelen);
+    E.row.chars[linelen] = '\0';
+    E.numrows = 1;
+  }
+  free(line);
+  fclose(fp);
 }
 
 /* =============== Append Buffer =============== */
@@ -378,10 +398,12 @@ void initEditor() {
   if (getWindowSize(&E.screenrows, &E.screencols) == -1) die("getWindowSize");
 }
 
-int main() {
+int main(int argc, char *argv[]) {
   enableRawMode();
   initEditor();
-  editorOpen();
+  if (argc >= 2) {
+    editorOpen(argv[1]);
+  }
   
   while (1) {
     editorRefreshScreen();
