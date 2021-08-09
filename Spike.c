@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
 #include <termios.h>
 #include <unistd.h>
 
@@ -191,6 +192,23 @@ int getWindowSize(int *rows, int *cols) {
   }
 }
 
+/* =============== File I/O =============== */
+
+void editorOpen() {
+  char *line = "Hello, world!";
+  ssize_t linelen = 13;
+
+  E.row.size = linelen;
+
+  /* Allocates a block of memory according to the size of the string */
+  E.row.chars = malloc(linelen + 1);
+
+  /* Copies the string into the memory that was allocated */
+  memcpy(E.row.chars, line, linelen);
+  E.row.chars[linelen] = '\0';
+  E.numrows = 1;
+}
+
 /* =============== Append Buffer =============== */
 
 /* Creating a dynamic string type that only supports appending */
@@ -358,6 +376,7 @@ void initEditor() {
 int main() {
   enableRawMode();
   initEditor();
+  editorOpen();
   
   while (1) {
     editorRefreshScreen();
