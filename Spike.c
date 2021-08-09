@@ -22,6 +22,7 @@ enum editorKey {
   ARROW_RIGHT,          /* 1001 */ 
   ARROW_UP,             /* 1002 */
   ARROW_DOWN,            /* 1003, ... */
+  DEL_KEY,
   HOME_KEY,
   END_KEY,
   PAGE_UP,
@@ -95,14 +96,15 @@ int editorReadKey() {
     if (read(STDIN_FILENO, &seq[1], 1) != 1) return '\x1b';
 
     /* Determines if the escape sequence is an arrow key,   
-     * Page up/down key, or Home/End key escape sequence. If it 
-     * is, the corresponding key is returned */
+     * Page up/down key, Del key, or Home/End key escape 
+     * sequence. If it is, the corresponding key is returned */
     if (seq[0] == '[') {
       if (seq[1] >= '0' && seq[1] <= '9') {
 	if (read(STDIN_FILENO, &seq[2], 1) != 1) return '\x1b';
 	if (seq[2] == '~') {
 	  switch (seq[1]) {
 	    case '1': return HOME_KEY;
+	    case '3': return DEL_KEY;
 	    case '4': return END_KEY;
 	    case '5': return PAGE_UP;
 	    case '6': return PAGE_DOWN;
