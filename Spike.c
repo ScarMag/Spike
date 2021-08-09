@@ -15,11 +15,13 @@
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
+/* Uses large ints instead of the w, a, s, d keys, 
+ * as to avoid conflicts with other regular keypresses */
 enum editorKey {
-  ARROW_LEFT = 'a',
-  ARROW_RIGHT = 'd',
-  ARROW_UP = 'w',
-  ARROW_DOWN = 's'
+  ARROW_LEFT = 1000,    
+  ARROW_RIGHT,          /* 1001 */ 
+  ARROW_UP,             /* 1002 */
+  ARROW_DOWN            /* 1003 */
 };
 
 /* =============== Data =============== */
@@ -72,7 +74,7 @@ void enableRawMode() {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
 
-char editorReadKey() {
+int editorReadKey() {
   int nread;
   char c;
   while ((nread = read(STDIN_FILENO, &c, 1)) != 1) {
@@ -138,9 +140,9 @@ int getCursorPosition(int *rows, int *cols) {
 
 /* Sets the parameters to the height and width of the terminal window */
 int getWindowSize(int *rows, int *cols) {
-  struct winsize ws;
+  /* struct winsize ws; */
 
-  /* I/O Control function that sets ws to the value returned by 
+  /* I/O Control function that sets ws to the value returned by
    * TIOCGWINSZ (Terminal I/O Control Get Window Size???) */
   if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
     if (write(STDOUT_FILENO, "\x1b[999C\x1b[999B", 12) != 12) return -1;
@@ -242,7 +244,7 @@ void editorRefreshScreen() {
 
 /* =============== Input =============== */
 
-void editorMoveCursor(char key) {
+void editorMoveCursor(int key) {
   switch (key) {
     case ARROW_LEFT:
       E.cx--;
@@ -260,7 +262,7 @@ void editorMoveCursor(char key) {
 }
 
 void editorProcessKeypress() {
-  char c = editorReadKey();
+  int c = editorReadKey();
   
   switch (c) {
     case CTRL_KEY('q'):
