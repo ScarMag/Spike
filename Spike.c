@@ -15,8 +15,8 @@
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
-/* Uses large ints instead of the w, a, s, d keys, 
- * as to avoid conflicts with other regular keypresses */
+/* Uses large ints, as to avoid conflicts with other 
+ * regular keypresses */
 enum editorKey {
   ARROW_LEFT = 1000,    
   ARROW_RIGHT,          /* 1001 */ 
@@ -91,8 +91,8 @@ int editorReadKey() {
     if (read(STDIN_FILENO, &seq[1], 1) != 1) return '\x1b';
 
     /* Determines if the escape sequence is an arrow key 
-     * escape sequence. If it is, the corresponding w, a, s, d 
-     * character is returned */
+     * escape sequence. If it is, the corresponding arrow key 
+     * is returned */
     if (seq[0] == '[') {
       switch (seq[1]) {
         case 'A': return ARROW_UP;
