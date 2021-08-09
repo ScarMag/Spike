@@ -221,7 +221,7 @@ void editorAppendRow(char *s, size_t len) {
 
 /* =============== File I/O =============== */
 
-void editorOpen() {
+void editorOpen(char *filename) {
   FILE *fp = fopen(filename, "r");
   if (!fp) die("fopen");
 
@@ -237,8 +237,7 @@ void editorOpen() {
    * to point to the memory and linecap to the amount of memory it
    * allocated. Returns the length of the line read, or -1 if it is 
    * at the end of a file */
-  linelen = getline(&line, &linecap, fp);
-  if (linelen != -1) {
+  while ((linelen = getline(&line, &linecap, fp)) != -1) {
     while (linelen > 0 && (line[linelen - 1] == '\n' ||
 			   line[linelen - 1] == '\r'))
       linelen--;
