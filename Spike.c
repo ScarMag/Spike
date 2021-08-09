@@ -202,15 +202,21 @@ int getWindowSize(int *rows, int *cols) {
 
 /* Initializes E.row */
 void editorAppendRow(char *s, size_t len) {
-  E.row.size = len;
+
+  /* Allocates a block of memory according to the number of bytes  
+   * each erow takes * the number of rows we want */
+  E.row = realloc(E.row, sizeof(erow) * (E.numrows + 1));
+
+  int at = E.numrows;  
+  E.row[at].size = len;
 
   /* Allocates a block of memory according to the size of the string */
-  E.row.chars = malloc(len + 1);
+  E.row[at].chars = malloc(len + 1);
   
   /* Copies the string into the memory that was allocated */
-  memcpy(E.row.chars, s, len);
-  E.row.chars[len] = '\0';
-  E.numrows = 1;
+  memcpy(E.row[at].chars, s, len);
+  E.row[at].chars[len] = '\0';
+  E.numrows++;
 }
 
 /* =============== File I/O =============== */
