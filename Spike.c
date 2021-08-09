@@ -21,7 +21,9 @@ enum editorKey {
   ARROW_LEFT = 1000,    
   ARROW_RIGHT,          /* 1001 */ 
   ARROW_UP,             /* 1002 */
-  ARROW_DOWN            /* 1003 */
+  ARROW_DOWN,            /* 1003, ... */
+  PAGE_UP,
+  PAGE_DOWN
 };
 
 /* =============== Data =============== */
@@ -90,18 +92,28 @@ int editorReadKey() {
     if (read(STDIN_FILENO, &seq[0], 1) != 1) return '\x1b';
     if (read(STDIN_FILENO, &seq[1], 1) != 1) return '\x1b';
 
-    /* Determines if the escape sequence is an arrow key 
-     * escape sequence. If it is, the corresponding arrow key 
-     * is returned */
+    /* Determines if the escape sequence is an arrow key or  
+     * Page up/down escape sequence. If it is, the corresponding
+     * key is returned */
     if (seq[0] == '[') {
-      switch (seq[1]) {
-        case 'A': return ARROW_UP;
-        case 'B': return ARROW_DOWN;
-        case 'C': return ARROW_RIGHT;
-        case 'D': return ARROW_LEFT;
+      if (seq[1] >= '0' && seq[1] <= '9') {
+	if (read(STDIN_FILENO, &seq[2], 1) != 1) return '\x1b';
+	if (seq[2] == '~') {
+	  switch (seq[1]) {
+	    case '5': return PAGE_UP;
+	    case '6': return PAGE_DOWN;
+	  }
+	}
+      } else {
+	switch (seq[1]) {
+	  case 'A': return ARROW_UP;
+	  case 'B': return ARROW_DOWN;
+	  case 'C': return ARROW_RIGHT;
+          case 'D': return ARROW_LEFT;
+	}
       }
     }
-
+    
     return '\x1b';
   } else {
     return c;
@@ -140,8 +152,8 @@ int getCursorPosition(int *rows, int *cols) {
 
 /* Sets the parameters to the height and width of the terminal window */
 int getWindowSize(int *rows, int *cols) {
-  /* struct winsize ws; */
-
+  struct winsize ws;
+  
   /* I/O Control function that sets ws to the value returned by
    * TIOCGWINSZ (Terminal I/O Control Get Window Size???) */
   if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
