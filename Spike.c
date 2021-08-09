@@ -28,7 +28,7 @@ enum editorKey {
   ARROW_LEFT = 1000,    
   ARROW_RIGHT,          /* 1001 */ 
   ARROW_UP,             /* 1002 */
-  ARROW_DOWN,            /* 1003, ... */
+  ARROW_DOWN,           /* 1003, ... */
   DEL_KEY,
   HOME_KEY,
   END_KEY,
@@ -49,6 +49,7 @@ typedef struct erow {
 /* Stores the state of the editor */
 struct editorConfig {
   int cx, cy;
+  int rowoff;                     /* row offset */
   int screenrows;
   int screencols;
   int numrows;
@@ -412,6 +413,7 @@ void editorProcessKeypress() {
 void initEditor() {
   E.cx = 0;
   E.cy = 0;
+  E.rowoff = 0;
   E.numrows = 0;
   E.row = NULL;
   
