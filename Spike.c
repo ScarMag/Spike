@@ -272,8 +272,9 @@ void editorDrawRows(struct abuf *ab) {
   int y;
   for (y = 0; y < E.screenrows; y++) {
     if (y >= E.numrows) {
+      
       /* Displays a welcome message */
-      if (y == E.screenrows / 3) {
+      if (E.numrows == 0 && y == E.screenrows / 3) {
 	char welcome[80];
 	int welcomelen = snprintf(welcome, sizeof(welcome),
 				  "Spike editor -- version %s", SPIKE_VERSION);
