@@ -282,7 +282,7 @@ void abFree(struct abuf *ab) {
 
 /* =============== Output =============== */
 
-/* Sets the value of E.rowoff */
+/* Sets the values of E.rowoff and E.coloff */
 void editorScroll() {
 
   /* Checks if the cursor is above the visible window. If so, scrolls
@@ -295,6 +295,12 @@ void editorScroll() {
    * down to where the cursor is */
   if (E.cy >= E.rowoff + E.screenrows) {
     E.rowoff = E.cy - E.screenrows + 1;
+  }
+  if (E.cx < E.coloff) {
+    E.coloff = E.cx;
+  }
+  if (E.cx >= E.coloff + E.screencols) {
+    E.coloff = E.cx - E.screencols + 1;
   }
 }
 
