@@ -359,7 +359,8 @@ void editorRefreshScreen() {
   editorDrawRows(&ab);
 
   char buf[32];
-  snprintf(buf, sizeof(buf), "x1b[%d;%dH", (E.cy - E.rowoff) + 1, E.cx + 1);
+  snprintf(buf, sizeof(buf), "x1b[%d;%dH", (E.cy - E.rowoff) + 1,
+	                                   (E.cx - E.coloff) + 1);
   abAppend(&ab, buf, strlen(buf));
   
   abAppend(&ab, "\x1b[25h", 6);     /* Shows the cursor */
@@ -439,7 +440,7 @@ void initEditor() {
   E.cx = 0;
   E.cy = 0;
   E.rowoff = 0;
-  E.colfoff = 0;
+  E.coloff = 0;
   E.numrows = 0;
   E.row = NULL;
   
