@@ -382,6 +382,9 @@ void editorMoveCursor(int key) {
     case ARROW_LEFT:
       if (E.cx != 0) {
 	E.cx--;
+      } else if (E.cy > 0) {            /* Allows user to move to the end of the */
+	E.cy--;                         /* previous line */
+	E.cx = E.row[E.cy].size;
       }
       break;
     case ARROW_RIGHT:
