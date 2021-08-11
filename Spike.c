@@ -52,6 +52,7 @@ typedef struct erow {
 /* Stores the state of the editor */
 struct editorConfig {
   int cx, cy;
+  int rx;                         /* Index into the render field of an erow */
   int rowoff;                     /* row offset */
   int coloff;                     /* column offset */
   int screenrows;
@@ -503,6 +504,7 @@ void editorProcessKeypress() {
 void initEditor() {
   E.cx = 0;
   E.cy = 0;
+  E.rx = 0;
   E.rowoff = 0;
   E.coloff = 0;
   E.numrows = 0;
