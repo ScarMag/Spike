@@ -359,6 +359,7 @@ void editorScroll() {
   }
 }
 
+/* Writes out to the user's file */
 void editorDrawRows(struct abuf *ab) {
   int y;
   for (y = 0; y < E.screenrows; y++) {
@@ -398,6 +399,17 @@ void editorDrawRows(struct abuf *ab) {
     abAppend(ab, "\x1b[K", 3);    /* Erases part of the current line */
     abAppend(ab, "\r\n", 2);
   }
+}
+
+/* Creates a status bar at the bottom of the program */
+void editorDrawStatusBar(struct abuf *ab) {
+  abAppend(ab, "\x1b[7m", 4);    /* Switches to inverted colors */
+  int len = 0;
+  while (len < E.screencols) {
+    abAppend(ab, " ", 1);
+    len++;
+  }
+  abAppend(ab, "\x1b[m", 3);     /* Switches back to regular formatting */
 }
 
 /* Sets up the editing environment */
