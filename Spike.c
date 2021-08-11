@@ -356,10 +356,10 @@ void editorDrawRows(struct abuf *ab) {
 	abAppend(ab, "-_-", 3);
       }
     } else {
-      int len = E.row[filerow].size - E.coloff;
+      int len = E.row[filerow].rsize - E.coloff;
       if (len < 0) len = 0;
       if (len > E.screencols) len = E.screencols;
-      abAppend(ab, &E.row[filerow].chars[E.coloff], len);
+      abAppend(ab, &E.row[filerow].render[E.coloff], len);
     }
 
     abAppend(ab, "\x1b[K", 3);    /* Erases part of the current line */
