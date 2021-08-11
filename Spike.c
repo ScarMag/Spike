@@ -59,6 +59,7 @@ struct editorConfig {
   int screencols;
   int numrows;
   erow *row;                      /* Pointer to an array of erow structs */
+  char *filename;
   struct termios orig_termios;
 };
 
@@ -274,7 +275,14 @@ void editorAppendRow(char *s, size_t len) {
 
 /* =============== File I/O =============== */
 
+/* Allows the user to open a preexisting file */
 void editorOpen(char *filename) {
+  free(E.filename);
+
+  /* Makes a copy of the given string, or the file's name in
+   * this case, and allocates the required memory */
+  E.filename = strdup(filename);
+
   FILE *fp = fopen(filename, "r");
   if (!fp) die("fopen");
 
@@ -437,6 +445,7 @@ void editorRefreshScreen() {
 
 /* =============== Input =============== */
 
+/* Moves the cursor based on the user's input */ 
 void editorMoveCursor(int key) {
 
   /* Checks if the cursor is on an actual line. If it is, the
@@ -455,8 +464,8 @@ void editorMoveCursor(int key) {
     case ARROW_RIGHT:
       if (row && E.cx < row->size) {
 	E.cx++;
-      } else if (row && E.cx == row->size) {    /* Allows the user to move right */
-	E.cy++;                                 /* at the end of a line */
+      } else if (row && E.cx == row->size) {  /* Allows the user to move right */
+	E.cy++;                               /* at the end of a line */
 	E.cx = 0;
       }
       break;
@@ -543,6 +552,7 @@ void initEditor() {
   E.coloff = 0;
   E.numrows = 0;
   E.row = NULL;
+  E.filename = NULL;    /* Will stay NULL if a file is not opened */
   
   if (getWindowSize(&E.screenrows, &E.screencols) == -1) die("getWindowSize");
 
