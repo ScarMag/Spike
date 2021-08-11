@@ -373,6 +373,11 @@ void editorRefreshScreen() {
 /* =============== Input =============== */
 
 void editorMoveCursor(int key) {
+
+  /* Checks if the cursor is on an actual line. If it is, the
+   * row variable will point to the erow that the cursor is on */
+  erow *row = (E.cy >= E.numrows) ? NULL : &E.row[E.cy];
+
   switch (key) {
     case ARROW_LEFT:
       if (E.cx != 0) {
@@ -380,7 +385,9 @@ void editorMoveCursor(int key) {
       }
       break;
     case ARROW_RIGHT:
-      E.cx++;
+      if (row && E.cx < row->size) {
+	E.cx++;
+      }
       break;
     case ARROW_UP:
       if (E.cy != 0) {
