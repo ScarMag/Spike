@@ -19,6 +19,7 @@
 /* =============== Defines =============== */
 
 #define SPIKE_VERSION "0.0.1"
+#define SPIKE_TAB_STOP 8
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
@@ -216,7 +217,7 @@ void editorUpdateRow(erow *row) {
   /* The maximum number of characters needed for each tab 
    * is 8. tabs is multiplied by 7 because row->size already
    * counts 1 for each tab */
-  row->render = malloc(row->size + (tabs * 7) + 1);
+  row->render = malloc(row->size + tabs*(SPIKE_TAB_STOP - 1) + 1);
 
   int index = 0;
 
@@ -225,7 +226,7 @@ void editorUpdateRow(erow *row) {
   for (j = 0; j < row->size; j++) {
     if (row->chars[j] == '\t') {
       row->render[index++] = ' ';
-      while (index % 8 != 0) row->render[index++] = ' ';
+      while (index % SPIKE_TAB_STOP != 0) row->render[index++] = ' ';
     } else {
       row->render[index++] = row->chars[j];
     }
