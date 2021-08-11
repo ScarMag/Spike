@@ -412,19 +412,29 @@ void editorDrawRows(struct abuf *ab) {
 /* Creates a status bar at the bottom of the program */
 void editorDrawStatusBar(struct abuf *ab) {
   abAppend(ab, "\x1b[7m", 4);    /* Switches to inverted colors */
-  char status[80];
+  char status[80], rstatus[80];
 
   /* Displays up to 20 characters of the filename and the
    * number of lines in the file */
   int len = snprintf(status, sizeof(status), "%.20s - %d lines",
 		     E.filename ? E.filename : "[No Name]", E.numrows);
+
+  /* Displays the current line number */
+  int rlen = snprintf(rstatus, sizeof(rstatus), "%d/%d",
+		      E.cy + 1, E.numrows);
   if (len > E.screencols) len = E.screencols;
   abAppend(ab, status, len);
 
-  /* Ensures that the entire status bar has a white background */
+  /* Ensures that the second status string is only printed if it
+   * were to reach the right edge of the screen when printed */
   while (len < E.screencols) {
-    abAppend(ab, " ", 1);
-    len++;
+    if (E.screencols - len == rlen) {
+      abAppend(ab, rstatus, rlen);
+      break;
+    } else {
+      abAppend(ab, " ", 1);
+      len++;
+    }
   }
   abAppend(ab, "\x1b[m", 3);     /* Switches back to regular formatting */
 }
