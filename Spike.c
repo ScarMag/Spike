@@ -56,7 +56,7 @@ struct editorConfig {
   int screenrows;
   int screencols;
   int numrows;
-  erow *row;                      /* An array of erow structs */
+  erow *row;                      /* Pointer to an array of erow structs */
   struct termios orig_termios;
 };
 
@@ -204,11 +204,26 @@ int getWindowSize(int *rows, int *cols) {
 
 /* =============== Row Operations =============== */
 
+void editorUpdateRow(erow *row) {
+  free(row->render); 
+  row->render = malloc(row->size + 1);
+
+  int j;
+  int index;
+
+  /* Copies each character from chars to render */
+  for (j = 0; j < row->size; j++) {
+    row->render[index++] = row->chars[j];
+  }
+  row->render[index] = '\0';
+  row->rsize = index;
+}
+
 /* Initializes E.row */
 void editorAppendRow(char *s, size_t len) {
 
-  /* Allocates a block of memory according to the number of bytes  
-   * each erow takes * the number of rows we want */
+  /* Reallocates a bigger block of memory according to the number  
+   * of bytes each erow takes * the number of rows we want */
   E.row = realloc(E.row, sizeof(erow) * (E.numrows + 1));
 
   int at = E.numrows;  
@@ -223,6 +238,7 @@ void editorAppendRow(char *s, size_t len) {
 
   E.row[at].rsize = 0;
   E.row[at].render = NULL;
+  editorUpdateRow(&E.row[at]);
   
   E.numrows++;
 }
