@@ -43,7 +43,9 @@ enum editorKey {
  * instead of struct erow */
 typedef struct erow {    
   int size;
+  int rsize;
   char *chars;
+  char *render;
 } erow;
 
 /* Stores the state of the editor */
@@ -218,6 +220,10 @@ void editorAppendRow(char *s, size_t len) {
   /* Copies the string into the memory that was allocated */
   memcpy(E.row[at].chars, s, len);
   E.row[at].chars[len] = '\0';
+
+  E.row[at].rsize = 0;
+  E.row[at].render = NULL;
+  
   E.numrows++;
 }
 
