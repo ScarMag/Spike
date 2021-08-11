@@ -400,6 +400,19 @@ void editorMoveCursor(int key) {
       }
       break;
   }
+
+  /* Setting row again because E.cy could point to a different
+   * line now */
+  row = (E.cy >= E.numrows) ? NULL : &E.row[E.cy];
+
+  /* A NULL line (new line) has a size of 0 */
+  int rowlen = row ? row->size : 0;        
+
+  /* Sets E.cx to the end of the line if the cursor is past the 
+   * end of the line */
+  if (E.cx > rowlen) {
+    E.cx = rowlen;
+  }
 }
 
 void editorProcessKeypress() {
