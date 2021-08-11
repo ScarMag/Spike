@@ -498,7 +498,14 @@ void editorProcessKeypress() {
     case PAGE_UP:
     case PAGE_DOWN:
       {
-        int times = E.screenrows;
+	if (c == PAGE_UP) {
+	  E.cy = E.rowoff;
+	} else if (c == PAGE_DOWN) {
+	  E.cy = E.rowoff + E.screenrows - 1;
+	  if (E.cy > E.numrows) E.cy = E.numrows;
+	}
+	
+	int times = E.screenrows;
 
 	/* ?: as a ternary operator -> "if a then b, otherwise c" */
         while (times--)
