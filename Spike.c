@@ -491,7 +491,8 @@ void editorProcessKeypress() {
       break;
 
     case END_KEY:
-      E.cx = E.screencols - 1;
+      if (E.cy < E.numrows)
+	E.cx = E.row[E.cy].size;
       break;
       
     /* Simulates Page up/down by inputting ARROW_UP/DOWN many times */
