@@ -28,6 +28,7 @@
 /* Uses large ints, as to avoid conflicts with other 
  * regular keypresses */
 enum editorKey {
+  BACKSPACE = 127,
   ARROW_LEFT = 1000,    
   ARROW_RIGHT,          /* 1001 */ 
   ARROW_UP,             /* 1002 */
@@ -598,6 +599,10 @@ void editorProcessKeypress() {
   int c = editorReadKey();
   
   switch (c) {
+    case '\r':
+      /* TODO */
+      break;
+
     case CTRL_KEY('q'):                      /* Exits the editor program */ 
       write(STDOUT_FILENO, "\x1b[2J", 4);
       write(STDOUT_FILENO, "\x1b[H", 3);
@@ -611,6 +616,12 @@ void editorProcessKeypress() {
     case END_KEY:
       if (E.cy < E.numrows)
 	E.cx = E.row[E.cy].size;
+      break;
+
+    case BACKSPACE:
+    case CTRL_KEY('h'):
+    case DEL_KEY:
+      /* TODO */
       break;
       
     /* Simulates Page up/down by inputting ARROW_UP/DOWN many times */
@@ -639,6 +650,10 @@ void editorProcessKeypress() {
       editorMoveCursor(c);
       break;
 
+    case CTRL_KEY('l'):
+    case '\x1b':
+      break;
+      
     default:
       editorInsertChar(c);
       break;
