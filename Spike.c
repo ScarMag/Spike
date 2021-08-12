@@ -424,10 +424,19 @@ void editorDrawStatusBar(struct abuf *ab) {
 		     E.filename ? E.filename : "[No Name]", E.numrows);
 
   int curline = E.cy + 1;    /* current line */
-  
-  /* Displays the current line number */
+  int curpercent;
+
+  /* Done to avoid dividing by 0 when a new file is opened */
+  if (E.numrows != 0) {
+    curpercent = (curline * 100) / E.numrows;
+  } else {
+    curpercent = 0;
+  }
+  if (curpercent > 100) curpercent = 100;      
+      
+  /* Displays the current line number and percentage */
   int rlen = snprintf(rstatus, sizeof(rstatus), "L%d | %d%%",
-		      curline, (curline * 100) / E.numrows);
+			curline, curpercent);
   if (len > E.screencols) len = E.screencols;
   abAppend(ab, status, len);
 
@@ -446,6 +455,21 @@ void editorDrawStatusBar(struct abuf *ab) {
   abAppend(ab, "\r\n", 2);       /* Prints a new line after the status bar */
 }
 
+/* Creates a message bar at the very bottom of the program */
+void editorDrawMessageBar(struct abuf *ab) {
+  abAppend(ab, "\x1b[K", 3);           /* Clears the message bar */
+  int msglen = strlen(E.statusmsg);
+
+  /* Shortens the statusmsg if it is longer than the 
+   * width of the screen */
+  if (msglen > E.screencols) msglen = E.screencols;
+
+  /* If there is a message and it is less than 5 seconds
+   * old, display the message */
+  if (msglen && time(NULL) - E.statusmsg_time < 5)
+    abAppend(ab, E.statusmsg, msglen);
+}
+
 /* Sets up the editing environment */
 void editorRefreshScreen() {
   editorScroll();
@@ -457,7 +481,8 @@ void editorRefreshScreen() {
 
   editorDrawRows(&ab);
   editorDrawStatusBar(&ab);
-
+  editorDrawMessageBar(&ab);
+  
   char buf[32];
   snprintf(buf, sizeof(buf), "x1b[%d;%dH", (E.cy - E.rowoff) + 1,
 	                                   (E.rx - E.coloff) + 1);
