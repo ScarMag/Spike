@@ -291,6 +291,22 @@ void editorRowInsertChar(erow *row, int at, int c) {
   editorUpdateRow(row);
 }
 
+/* =============== Editor Operations =============== */
+
+/* Takes in a character and uses editorRowInsertChar(...)
+ * to insert that character into the position that the 
+ * cursor is at */
+void editorInsertChar(int c) {
+
+  /* Appends a new row to the file if the user is at the 
+   * end of the file */
+  if (E.cy == E.numrows) {
+      editorAppendRow("", 0);
+  }
+  editorRowInsertChar(&E.row[E.cy], E.cx, c);
+  E.cx++;
+}
+
 /* =============== File I/O =============== */
 
 /* Allows the user to open a preexisting file */
