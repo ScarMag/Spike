@@ -460,8 +460,8 @@ void editorDrawMessageBar(struct abuf *ab) {
   abAppend(ab, "\x1b[K", 3);           /* Clears the message bar */
   int msglen = strlen(E.statusmsg);
 
-  /* Shortens the statusmsg if it is longer than the 
-   * width of the screen */
+  /* Shortens the statusmsg if it is longer than the width 
+   * of the screen */
   if (msglen > E.screencols) msglen = E.screencols;
 
   /* If there is a message and it is less than 5 seconds
