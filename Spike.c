@@ -277,6 +277,20 @@ void editorAppendRow(char *s, size_t len) {
   E.numrows++;
 }
 
+/* Inserts a character into an erow at a given position */
+void editorRowInsertChar(erow *row, int at, int c) {
+  if (at < 0 || at > row->size) at = row->size;
+  row->chars = realloc(row->chars, row->size + 2);
+
+  /* Copies (row->size - at + 1) bytes from (%row->chars[at])
+   * to (&row->chars[at + 1]). Similar to memcpy(), but is 
+   * safe to use when the source and destination arrays overlap */
+  memmove(&row->chars[at + 1], &row->chars[at], row->size - at + 1);
+  row->size++;
+  row->chars[at] = c;
+  editorUpdateRow(row);
+}
+
 /* =============== File I/O =============== */
 
 /* Allows the user to open a preexisting file */
