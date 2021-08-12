@@ -9,6 +9,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
@@ -419,12 +420,14 @@ void editorDrawStatusBar(struct abuf *ab) {
 
   /* Displays up to 20 characters of the filename and the
    * number of lines in the file */
-  int len = snprintf(status, sizeof(status), "%.20s - %d lines",
+  int len = snprintf(status, sizeof(status), "%.20s --- %d lines",
 		     E.filename ? E.filename : "[No Name]", E.numrows);
 
+  int curline = E.cy + 1;    /* current line */
+  
   /* Displays the current line number */
-  int rlen = snprintf(rstatus, sizeof(rstatus), "%d/%d",
-		      E.cy + 1, E.numrows);
+  int rlen = snprintf(rstatus, sizeof(rstatus), "L%d | %d%%",
+		      curline, (curline * 100) / E.numrows);
   if (len > E.screencols) len = E.screencols;
   abAppend(ab, status, len);
 
@@ -452,6 +455,7 @@ void editorRefreshScreen() {
   abAppend(&ab, "\x1b[H", 3);
 
   editorDrawRows(&ab);
+  editorDrawStatusBar(&ab);
 
   char buf[32];
   snprintf(buf, sizeof(buf), "x1b[%d;%dH", (E.cy - E.rowoff) + 1,
