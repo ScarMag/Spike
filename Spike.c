@@ -71,6 +71,10 @@ struct editorConfig {
 
 struct editorConfig E;
 
+/* =============== Prototypes =============== */
+
+void editorSetStatusMessage(const char *fmt, ...);
+
 /* =============== Terminal =============== */
 
 /* Error handling */
