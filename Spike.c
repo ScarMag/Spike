@@ -469,6 +469,23 @@ void editorRefreshScreen() {
   abFree(&ab);
 }
 
+/* The ... argument indicates that this is a variadic function, 
+ * which means that it can take any number of arguments. The 
+ * functions, va_start() and va_end(), have to be called on
+ * a value of type va_list*/
+void editorSetStatusMessage(const char *fmt, ...) {
+  va_list ap;
+
+  /* The last argument before ... must be passed, so that the 
+   * address of the next argument(s) is known */
+  va_start(ap, fmt);
+  vsnprintf(E.statusmsg, sizeof(E.statusmsg), fmt, ap);
+  va_end(ap);
+
+  /* Sets E.statusmsg_time to the current time */
+  E.statusmsg_time = time(NULL);
+}
+
 /* =============== Input =============== */
 
 /* Moves the cursor based on the user's input */ 
@@ -595,6 +612,8 @@ int main(int argc, char *argv[]) {
   if (argc >= 2) {
     editorOpen(argv[1]);
   }
+
+  editorSetStatusMessage("HELP: Ctrl-Q = quit");
   
   while (1) {
     editorRefreshScreen();
