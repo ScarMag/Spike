@@ -8,6 +8,7 @@
 
 #include <ctype.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -370,6 +371,29 @@ void editorOpen(char *filename) {
   }
   free(line);
   fclose(fp);
+}
+
+/* Writes the string returned by editorRowsToString() to disk */
+void editorSave() {
+
+  /* Checks if it is a new file */
+  if (E.filename == NULL) return;
+
+  int len;
+  char *buf = editorRowsToString(&len);
+
+  /* O_RDWR flag opens the file with reading and writing
+   * permissions. O_CREAT flag creates a new file if it
+   * does not already exist. 0664 gives the owner of the 
+   * file permission to read and write, and everyone 
+   * only gets read permission */
+  int fd = open(E.filename, O_RDWR | O_CREAT, 0644);
+
+  /* Sets the file's size to the specified length */
+  ftruncate(fd, len);
+  write(fd, buf, len);
+  close(fd);
+  free(buf);
 }
 
 /* =============== Append Buffer =============== */
