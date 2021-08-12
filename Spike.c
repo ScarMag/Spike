@@ -63,6 +63,7 @@ struct editorConfig {
   int screencols;
   int numrows;
   erow *row;                      /* Pointer to an array of erow structs */
+  int dirty;                      /* Text loaded in editor != file contents */
   char *filename;
   char statusmsg[80];
   time_t statusmsg_time;
@@ -744,6 +745,7 @@ void initEditor() {
   E.coloff = 0;
   E.numrows = 0;
   E.row = NULL;
+  E.dirty = 0;
   E.filename = NULL;        /* Will stay NULL if a file is not opened */
   E.statusmsg[0] = '\0';    /* No message will be displayed by default */
   E.statusmsg_time = 0;
