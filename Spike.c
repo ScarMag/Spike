@@ -652,8 +652,8 @@ void editorProcessKeypress() {
   int c = editorReadKey();
   
   switch (c) {
-    case '\r':
-      /* TODO */
+    case '\r':                               /* Enter key */
+      /* TODO */   
       break;
 
     case CTRL_KEY('q'):                      /* Exits the editor program */ 
@@ -662,12 +662,16 @@ void editorProcessKeypress() {
       exit(0);
       break;
 
-    case HOME_KEY:
-      E.cx = 0;
+    case CTRL_KEY('s'):                      /* Saves the file to disk */
+      editorSave();
       break;
 
-    case END_KEY:
-      if (E.cy < E.numrows)
+    case HOME_KEY:                           /* Moves cursor to the */
+      E.cx = 0;                              /* beginning of the current line */
+      break;
+
+    case END_KEY:                            /* Moves cursor to the */
+      if (E.cy < E.numrows)                  /* end of the current line */
 	E.cx = E.row[E.cy].size;
       break;
 
