@@ -443,6 +443,7 @@ void editorDrawStatusBar(struct abuf *ab) {
     }
   }
   abAppend(ab, "\x1b[m", 3);     /* Switches back to regular formatting */
+  abAppend(ab, "\r\n", 2);       /* Prints a new line after the status bar */
 }
 
 /* Sets up the editing environment */
@@ -602,8 +603,8 @@ void initEditor() {
   if (getWindowSize(&E.screenrows, &E.screencols) == -1) die("getWindowSize");
 
   /* Gets decremented so that editorDrawRows() does not
-   * draw a line of text at the bottom of the screen */
-  E.screenrows -= 1;
+   * draw lines of text at the bottom of the screen */
+  E.screenrows -= 2;
 }
 
 int main(int argc, char *argv[]) {
