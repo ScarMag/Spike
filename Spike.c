@@ -522,8 +522,9 @@ void editorDrawStatusBar(struct abuf *ab) {
 
   /* Displays up to 20 characters of the filename and the
    * number of lines in the file */
-  int len = snprintf(status, sizeof(status), "%.20s --- %d lines",
-		     E.filename ? E.filename : "[No Name]", E.numrows);
+  int len = snprintf(status, sizeof(status), "%.20s --- %d lines %s",
+		     E.filename ? E.filename : "[No Name]", E.numrows,
+		     E.dirty ? "(modified)" : "");
 
   int curline = E.cy + 1;    /* current line */
   int curpercent;
