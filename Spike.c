@@ -385,14 +385,22 @@ void editorSave() {
   /* O_RDWR flag opens the file with reading and writing
    * permissions. O_CREAT flag creates a new file if it
    * does not already exist. 0664 gives the owner of the 
-   * file permission to read and write, and everyone 
+   * file permission to read and write, and everyone else 
    * only gets read permission */
   int fd = open(E.filename, O_RDWR | O_CREAT, 0644);
-
+  if (fd != 1) {
+    
   /* Sets the file's size to the specified length */
-  ftruncate(fd, len);
-  write(fd, buf, len);
-  close(fd);
+    if (ftruncate(fd, len) != -1) {
+      if (write(fd, buf, len) == len) {
+	close(fd);
+	free(buf);
+	return;
+      }
+    }
+    close(fd);
+  }
+
   free(buf);
 }
 
