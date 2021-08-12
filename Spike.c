@@ -310,6 +310,35 @@ void editorInsertChar(int c) {
 
 /* =============== File I/O =============== */
 
+/* Converts an array of erow structs into a single string,
+ * which will be written out to a file */
+char *editorRowsToString(int *buflen) {
+  int totlen = 0;
+  int j;
+
+  /* Adds up the lengths of each row of text, adding 1 to 
+   * each row's size to account for a newline character */
+  for (j = 0; j < E.numrows; j++) 
+    totlen += E.row[j].size + 1;
+  *buflen = totlen;
+
+  char *buf = malloc(totlen);
+  char *p = buf;
+  for (j = 0; j < E.numrows; j++) {
+    memcpy(p, E.row[j].chars, E.row[j].size);
+
+    /* Advances the pointer to just after the last char
+     * in memory */
+    p += E.row[j].size;
+
+    /* Places a newline character at the end of each row */
+    *p = '\n';
+    p++;
+  }
+  
+  return buf;  
+}
+
 /* Allows the user to open a preexisting file */
 void editorOpen(char *filename) {
   free(E.filename);
