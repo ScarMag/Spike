@@ -530,18 +530,20 @@ void editorDrawStatusBar(struct abuf *ab) {
 
   int curline = E.cy + 1;    /* current line */
   int curpercent;
-
-  /* Done to avoid dividing by 0 when a new file is opened */
-  if (E.numrows != 0) {
+  int rlen;
+  
+  /* Displays the current line number and percentage if the 
+   * number of rows in the editor is greater than the height
+   * of the screen. Otherwise, only the current line number
+   * is displayed */
+  if (E.numrows > E.screenrows ) {
     curpercent = (curline * 100) / E.numrows;
+    if (curpercent > 100) curpercent = 100;
+    rlen = snprintf(rstatus, sizeof(rstatus), "L%d | %d%%",
+		    curline, curpercent);
   } else {
-    curpercent = 0;
+    rlen = snprintf(rstatus, sizeof(rstatus), "L%d", curline);
   }
-  if (curpercent > 100) curpercent = 100;      
-      
-  /* Displays the current line number and percentage */
-  int rlen = snprintf(rstatus, sizeof(rstatus), "L%d | %d%%",
-			curline, curpercent);
   if (len > E.screencols) len = E.screencols;
   abAppend(ab, status, len);
 
