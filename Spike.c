@@ -282,6 +282,7 @@ void editorAppendRow(char *s, size_t len) {
   editorUpdateRow(&E.row[at]);
   
   E.numrows++;
+  E.dirty++;
 }
 
 /* Inserts a character into an erow at a given position */
@@ -296,6 +297,7 @@ void editorRowInsertChar(erow *row, int at, int c) {
   row->size++;
   row->chars[at] = c;
   editorUpdateRow(row);
+  E.dirty++;
 }
 
 /* =============== Editor Operations =============== */
