@@ -23,6 +23,7 @@
 
 #define SPIKE_VERSION "0.0.1"
 #define SPIKE_TAB_STOP 8
+#define SPIKE_QUIT_TIMES 3
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
@@ -674,6 +675,11 @@ void editorMoveCursor(int key) {
 }
 
 void editorProcessKeypress() {
+
+  /* Static variables preserve their previous value in their 
+   * previous scope and are not reinitialized in the new scope */
+  static int quit_times = SPIKE_QUIT_TIMES;
+
   int c = editorReadKey();
   
   switch (c) {
@@ -681,7 +687,13 @@ void editorProcessKeypress() {
       /* TODO */   
       break;
 
-    case CTRL_KEY('q'):                      /* Exits the editor program */ 
+    case CTRL_KEY('q'):                      /* Exits the editor program */
+      if (E.dirty && quit_times > 0) {
+	editorSetStatusMessage("WARNING!!! File has unsaved changes. "
+          "Press Ctrl-Q %d more times to quit.", quit_times);
+	quit_times--;
+	return;
+      }
       write(STDOUT_FILENO, "\x1b[2J", 4);
       write(STDOUT_FILENO, "\x1b[H", 3);
       exit(0);
@@ -740,6 +752,8 @@ void editorProcessKeypress() {
       editorInsertChar(c);
       break;
   }
+
+  quit_times = SPIKE_QUIT_TIMES;
 }
 
 /* =============== Init =============== */
