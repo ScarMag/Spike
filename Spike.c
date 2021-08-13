@@ -330,6 +330,21 @@ void editorInsertChar(int c) {
   E.cx++;
 }
 
+/* Takes in a character and uses editorRowDelChar(...)
+ * to delete the character that is to the left of the
+ * cursor */
+void editorDelChar() {
+  if (E.cy == E.numrows) return;
+
+  /* Sets row to the address of the erow the cursor
+   * is on */
+  erow *row = &E.row[E.cy];
+  if (E.cx > 0) {
+    editorRowDelChar(row, E.cx - 1);
+    E.cx--;
+  }
+}
+
 /* =============== File I/O =============== */
 
 /* Converts an array of erow structs into a single string,
