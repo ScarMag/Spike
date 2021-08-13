@@ -753,6 +753,7 @@ void editorProcessKeypress() {
       break;
   }
 
+  /* Gets reset back to 3 when any key other than Ctrl-Q is pressed */
   quit_times = SPIKE_QUIT_TIMES;
 }
 
