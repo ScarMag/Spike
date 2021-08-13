@@ -291,12 +291,25 @@ void editorRowInsertChar(erow *row, int at, int c) {
   if (at < 0 || at > row->size) at = row->size;
   row->chars = realloc(row->chars, row->size + 2);
 
-  /* Copies (row->size - at + 1) bytes from (%row->chars[at])
-   * to (&row->chars[at + 1]). Similar to memcpy(), but is 
+  /* Copies (row->size - at + 1) bytes from (row->chars[at])
+   * to (row->chars[at + 1]). Similar to memcpy(), but is 
    * safe to use when the source and destination arrays overlap */
   memmove(&row->chars[at + 1], &row->chars[at], row->size - at + 1);
   row->size++;
   row->chars[at] = c;
+  editorUpdateRow(row);
+  E.dirty++;
+}
+
+/* Deletes a character in an erow at a given position */
+void editorRowDelChar(erow *row, int at) {
+  if (at < 0 || at >= row->size) return;
+
+  /* Copies (row->size - at) bytes from (row->chars[at + 1])
+   * to (row->chars[at]). Shifts all bytes to the right of
+   * row->chars[at] to left once, overwriting it */
+  memmove(&row->chars[at], &row->chars[at + 1], row->size - at);
+  row->size--;
   editorUpdateRow(row);
   E.dirty++;
 }
