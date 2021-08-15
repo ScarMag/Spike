@@ -319,6 +319,21 @@ void editorRowInsertChar(erow *row, int at, int c) {
   E.dirty++;
 }
 
+/* Appends a string to the end of a row */
+void editorRowAppendString(erow *row, char *s, size_t len) {
+
+  /* Reallocates a block of memory the size of the current row + 
+   * the new string + 1 (for the null character at the end) */
+  row->chars = realloc(row->chars, row->size + len + 1);
+
+  /* Copies the new string to the end of the current row */
+  memcpy(&row->chars[row->size], s, len);
+  row->size += len;
+  row->chars[row->size] = '\0';
+  editorUpdateRow(row);
+  E.dirty++;
+}
+
 /* Deletes a character in an erow at a given position */
 void editorRowDelChar(erow *row, int at) {
   if (at < 0 || at >= row->size) return;
