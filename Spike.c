@@ -286,6 +286,24 @@ void editorAppendRow(char *s, size_t len) {
   E.dirty++;
 }
 
+/* Frees the memory owned by the erow being deleted */
+void editorFreeRow(erow *row) {
+  free(row->render);
+  free(row->chars);
+}
+
+/* Deletes an erow at a given position */
+void editorDelRow(int at) {
+  if (at < 0 || at >= E.numrows) return;
+  editorFreeRow(&E.row[at]);
+
+  /* Shifts all erows after E.row[at] back one to overwrite
+   * E.row[at] */
+  memmove(&E.row[at], &E.row[at + 1], sizeof(erow) * (E.numrows - at - 1));
+  E.numrows--;
+  E.dirty++;
+}
+
 /* Inserts a character into an erow at a given position */
 void editorRowInsertChar(erow *row, int at, int c) {
   if (at < 0 || at > row->size) at = row->size;
