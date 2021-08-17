@@ -367,7 +367,8 @@ void editorInsertChar(int c) {
  * to delete the character that is to the left of the
  * cursor */
 void editorDelChar() {
-  if (E.cy == E.numrows) return;
+  if (E.cy == E.numrows) return;         /* At the end of a file */
+  if (E.cx == 0 && E.cy == 0) return;    /* At the beginning of a file */
 
   /* Sets row to the address of the erow the cursor
    * is on */
@@ -375,6 +376,19 @@ void editorDelChar() {
   if (E.cx > 0) {
     editorRowDelChar(row, E.cx - 1);
     E.cx--;
+  } else {
+
+    /* E.cx is set to the end of the line before the 
+     * current one */ 
+    E.cx = E.row[E.cy - 1].size;
+
+    /* Contents of current row are appended to the line
+     * before it */
+    editorRowAppendString(&E.row[E.cy - 1], row->chars, row->size);
+
+    /* Current row gets deleted by overwriting it */
+    editorDelRow(E.cy);
+    E.cy--;
   }
 }
 
