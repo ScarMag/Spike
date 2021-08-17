@@ -365,7 +365,7 @@ void editorInsertChar(int c) {
   /* Appends a new row to the file if the user is at the 
    * end of the file */
   if (E.cy == E.numrows) {
-      editorAppendRow("", 0);
+    editorInsertRow(E.numrows, "", 0);
   }
   editorRowInsertChar(&E.row[E.cy], E.cx, c);
   E.cx++;
@@ -460,7 +460,7 @@ void editorOpen(char *filename) {
     while (linelen > 0 && (line[linelen - 1] == '\n' ||
 			   line[linelen - 1] == '\r'))
       linelen--;
-    editorAppendRow(line, linelen);
+    editorInsertRow(E.numrows, line, linelen);
   }
   free(line);
   fclose(fp);
