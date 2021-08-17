@@ -23,5 +23,5 @@
     <li><code>Ctrl-F</code> --> Search (IP)</li> 
     <li><code>Ctrl-K</code> --> Kill (IP)</li> 
     <li><code>Ctrl-Y</code> --> Yank (IP)</li> 
-    <li>autocompleting braces, parentheses and brackets (IP)</li>
+    <li>Autocompleting braces, parentheses, brackets and quotes (IP)</li>
 </ul>
