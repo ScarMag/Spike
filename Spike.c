@@ -798,7 +798,7 @@ void editorProcessKeypress() {
   
   switch (c) {
     case '\r':                               /* Enter key */
-      /* TODO */   
+      editorInsertNewline();   
       break;
 
     case CTRL_KEY('q'):                      /* Exits the editor program */
