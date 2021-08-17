@@ -20,5 +20,8 @@
 <ul>
     <li><code>Ctrl-S</code> --> Save</li>
     <li><code>Ctrl-Q</code> --> Quit</li>   
-    <li><code>Ctrl-F</code> --> Search</li>
+    <li><code>Ctrl-F</code> --> Search (IP)</li> 
+    <li><code>Ctrl-K</code> --> Kill (IP)</li> 
+    <li><code>Ctrl-Y</code> --> Yank (IP)</li> 
+    <li>autocompleting braces, parentheses and brackets (IP)</li>
 </ul>
