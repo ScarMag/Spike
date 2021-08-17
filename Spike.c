@@ -261,20 +261,24 @@ void editorUpdateRow(erow *row) {
   row->rsize = index;
 }
 
-/* Initializes E.row */
-void editorAppendRow(char *s, size_t len) {
+/* Inserts a row at the given index */
+void editorInsertRow(int at, char *s, size_t len) {
+  if(at < 0 || at > E.numrows) return;
 
   /* Reallocates a bigger block of memory according to the number  
    * of bytes each erow takes * the number of rows we want */
   E.row = realloc(E.row, sizeof(erow) * (E.numrows + 1));
 
-  int at = E.numrows;  
+  /*            To      /   From    /              numBytes         */
+  memmove(&E.row[at + 1], &E.row[at], sizeof(erow) * (E.numrows - at));
+
   E.row[at].size = len;
 
   /* Allocates a block of memory according to the size of the string */
   E.row[at].chars = malloc(len + 1);
   
-  /* Copies the string into the memory that was allocated */
+  /* Copies the string into the memory that was allocated 
+   *        To         / From / numBytes */
   memcpy(E.row[at].chars, s, len);
   E.row[at].chars[len] = '\0';
 
@@ -298,7 +302,8 @@ void editorDelRow(int at) {
   editorFreeRow(&E.row[at]);
 
   /* Shifts all erows after E.row[at] back one to overwrite
-   * E.row[at] */
+   * E.row[at] 
+   *          To    /      From     /              numBytes            */
   memmove(&E.row[at], &E.row[at + 1], sizeof(erow) * (E.numrows - at - 1));
   E.numrows--;
   E.dirty++;
@@ -311,7 +316,8 @@ void editorRowInsertChar(erow *row, int at, int c) {
 
   /* Copies (row->size - at + 1) bytes from (row->chars[at])
    * to (row->chars[at + 1]). Similar to memcpy(), but is 
-   * safe to use when the source and destination arrays overlap */
+   * safe to use when the source and destination arrays overlap 
+   *              To         /      From      /      numBytes     */
   memmove(&row->chars[at + 1], &row->chars[at], row->size - at + 1);
   row->size++;
   row->chars[at] = c;
@@ -326,7 +332,8 @@ void editorRowAppendString(erow *row, char *s, size_t len) {
    * the new string + 1 (for the null character at the end) */
   row->chars = realloc(row->chars, row->size + len + 1);
 
-  /* Copies the new string to the end of the current row */
+  /* Copies the new string to the end of the current row 
+   *               To         / From / numBytes */
   memcpy(&row->chars[row->size], s, len);
   row->size += len;
   row->chars[row->size] = '\0';
@@ -340,7 +347,8 @@ void editorRowDelChar(erow *row, int at) {
 
   /* Copies (row->size - at) bytes from (row->chars[at + 1])
    * to (row->chars[at]). Shifts all bytes to the right of
-   * row->chars[at] to left once, overwriting it */
+   * row->chars[at] to left once, overwriting it 
+   *            To       /         From       /    numBytes   */
   memmove(&row->chars[at], &row->chars[at + 1], row->size - at);
   row->size--;
   editorUpdateRow(row);
@@ -409,6 +417,8 @@ char *editorRowsToString(int *buflen) {
   char *buf = malloc(totlen);
   char *p = buf;
   for (j = 0; j < E.numrows; j++) {
+
+    /*     To /    From     /    numBytes  */
     memcpy(p, E.row[j].chars, E.row[j].size);
 
     /* Advances the pointer to just after the last char
