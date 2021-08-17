@@ -371,6 +371,35 @@ void editorInsertChar(int c) {
   E.cx++;
 }
 
+/* Uses editorInsertRow(...) to either insert a new blank
+ * row or split the current line into two rows, depending
+ * on where the cursor is */
+void editorInsertNewLine() {
+
+  /* If the cursor is at the beginning of a line, a new
+   * blank row will be inserted before the current line */
+  if (E.cx == 0) {
+    editorInsertRow(E.cy, "", 0);
+  } else {
+    erow *row = &E.row[E.cy];
+
+    /* Puts all of the characters on the current row that
+     * are on the right side of the cursor onto a new row, 
+     * after the current one (split into 2 rows) */
+    editorInsertRow(E.cy + 1, &row->chars[E.cx], row->size - E.cx);
+
+    /* row is reassigned, due to calling realloc() in 
+     * editorInsertRow(...), which might invalidate the 
+     * pointer */
+    row = &E.row[E.cy];
+    row->size = E.cx;
+    row->chars[row->size] = '\0';
+    editorUpdateRow(row);
+  }
+  E.cy++;
+  E.cx = 0;
+}
+
 /* Takes in a character and uses editorRowDelChar(...)
  * to delete the character that is to the left of the
  * cursor */
