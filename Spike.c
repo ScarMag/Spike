@@ -374,7 +374,7 @@ void editorInsertChar(int c) {
 /* Uses editorInsertRow(...) to either insert a new blank
  * row or split the current line into two rows, depending
  * on where the cursor is */
-void editorInsertNewLine() {
+void editorInsertNewline() {
 
   /* If the cursor is at the beginning of a line, a new
    * blank row will be inserted before the current line */
