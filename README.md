@@ -11,6 +11,7 @@
 <p>I did this project for fun, but I realized that this was a great opportunity to:</p>
 <ul>
     <li>Refresh my mind on C/C++ syntax and topics, such as pointers, memory management/allocation, and user defined data types (typedef)</li>
+    <li>Practice using Git to keep track of all files</li>   
     <li>Brush up on basic Unix/Linux commands</li>   
     <li>Create something that I would use on a regular basis</li>
 </ul>
