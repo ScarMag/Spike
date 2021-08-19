@@ -503,7 +503,14 @@ void editorSave() {
 
   /* Checks if it is a new file */
   if (E.filename == NULL) {
-    E.filename = editorPrompt("Save as: %s")
+    E.filename = editorPrompt("Save as: %s");
+
+    /* Handles a possible return value of NULL from editorPrompt()
+     * due to the user inputting Escape */
+    if (E.filename == NULL) {
+      editorSetStatusMessage("Save aborted");
+      return;
+    }
   }
 
   int len;
