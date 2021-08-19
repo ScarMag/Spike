@@ -503,7 +503,7 @@ void editorSave() {
 
   /* Checks if it is a new file */
   if (E.filename == NULL) {
-    E.filename = editorPrompt("Save as: %s");
+    E.filename = editorPrompt("Save as: %s (ESC to cancel)");
 
     /* Handles a possible return value of NULL from editorPrompt()
      * due to the user inputting Escape */
@@ -767,8 +767,13 @@ char *editorPrompt(char *prompt) {
     /* Reads a keypress from user */
     int c = editorReadKey();
 
+    if (c == DEL_KEY || c == CTRL_KEY('h') || c == BACKSPACE) {
+
+      /* Overwites the last character from user input */
+      if (buflen != 0) buf[--buflen] = '\0';
+
     /* Cancels input prompt if user inputs Escape */
-    if (c == '\x1b') {               /* Escape key */
+    } else if (c == '\x1b') {               /* Escape key */
       editorSetStatusMessage("");
       free(buf);
       return NULL;     
