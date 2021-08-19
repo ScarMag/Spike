@@ -760,11 +760,15 @@ char *editorPrompt(char *prompt) {
     /* Reads a keypress from user */
     int c = editorReadKey();
 
-    /* if the user presses the Enter key, do ... */
-    if (c == '\r') {
+    /* Cancels input prompt if user inputs Escape */
+    if (c == '\x1b') {               /* Escape key */
+      editorSetStatusMessage("");
+      free(buf);
+      return NULL;     
+    } else if (c == '\r') {          /* Enter key */
 
-      /* if the user entered something, clear the status
-       * message and return what was typed */
+      /* if the user entered something, clears the status
+       * message and returns what was typed */
       if (buflen != 0) {
 	editorSetStatusMessage("");
 	return buf;
