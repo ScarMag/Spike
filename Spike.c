@@ -544,6 +544,41 @@ void editorSave() {
   editorSetStatusMessage("Can't save! I/O error: %s", strerror(errno));
 }
 
+/* =============== Find =============== */
+
+/* Allows user to search a file */
+void editorFind() {
+
+  /* Prompts user for search query */
+  char *query = editorPrompt("Search: %s (ESC to cancel)");
+  if (query == NULL) return;
+
+  int i;
+  for (i = 0; i < E.numrows; i++) {
+    erow *row = &E.row[i];
+
+    /* Checks if query is a substring of the current row.
+     * Returns NULL if there is no match, and returns a 
+     * pointer to the matching substring if there is a match */
+    char *match = strstr(row->render, query);
+
+    if (match) {
+
+      /* Places the cursor where the match is */
+      E.cy = i;
+      E.cx = match - row->render;
+
+      /* Causes editorScroll() to scroll up to where the 
+       * cursor is (at the match), placing the matching line
+       * at the very top of the screen */
+      E.rowoff = E.numrows;
+      break;
+    }
+  }
+
+  free(query);
+}
+
 /* =============== Append Buffer =============== */
 
 /* Creating a dynamic string type that only supports appending */
