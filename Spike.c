@@ -76,6 +76,7 @@ struct editorConfig E;
 /* =============== Prototypes =============== */
 
 void editorSetStatusMessage(const char *fmt, ...);
+void editorRefreshScreen();
 
 /* =============== Terminal =============== */
 
@@ -737,6 +738,47 @@ void editorSetStatusMessage(const char *fmt, ...) {
 }
 
 /* =============== Input =============== */
+
+/* Displays a prompt in the status bar, and also allows
+ * for the user to input a line of text */
+char *editorPrompt(char *prompt) {
+  size_t bufsize = 128;
+  char *buf = malloc(bufsize);
+
+  size_t buflen = 0;
+  buf[0] = '\0';
+
+  /* Infinite loop that repeatedly sets the status message,
+   * refreshes the screen and waits for a keypress */
+  while (1) {
+    editorSetStatusMessage(prompt, buf);
+    editorRefreshScreen();
+
+    /* Reads a keypress from user */
+    int c = editorReadKey();
+
+    /* if the user presses the Enter key, do ... */
+    if (c == '\r') {
+
+      /* if the user entered something, clear the status
+       * message and return what was typed */
+      if (buflen != 0) {
+	editorSetStatusMessage("");
+	return buf;
+      }
+    } else if (!iscntrl(c) && c < 128) {    /* No special keys */
+
+      /* If buflen reaches the maximum memory allocated,
+       * then double bufsize and realloc() accordingly */
+      if (buflen == bufsize - 1) {
+	bufsize *= 2;
+	buf = realloc(buf, bufsize);
+      }
+      buf[buflen++] = c;
+      buf[buflen] = '\0';
+    }
+  }
+}
 
 /* Moves the cursor based on the user's input */ 
 void editorMoveCursor(int key) {
