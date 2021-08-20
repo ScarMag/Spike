@@ -225,12 +225,33 @@ int getWindowSize(int *rows, int *cols) {
 int editorRowCxToRx(erow *row, int cx) {
   int rx = 0;
   int j;
+
+  /* Accounts for tabs and their whitespace */
   for (j = 0; j < cx; j++) {
     if (row->chars[j] == '\t')
       rx += (SPIKE_TAB_STOP - 1) - (rx % SPIKE_TAB_STOP);
     rx++;
   }
   return rx;
+}
+
+/* Converts a render index into a chars index */
+int editorRowRxToCx(erow *row, int rx) {
+  int cur_rx = 0;
+  int cx;
+
+  /* Loops through the chars string until cur_rx reaches
+   * the given rx value and returns cx */
+  for (cx = 0; cx < row->size; cx++) {
+    if (row->chars[cx] == '\t')
+      cur_rx += (SPIKE_TAB_STOP - 1) - (cur_rx % SPIKE_TAB_STOP);
+    cur_rx++;
+
+    if (cur_rx > rx) return cx;
+  }
+
+  /* Just in case the rx value given is out of range */
+  return cx;
 }
 
 void editorUpdateRow(erow *row) {
