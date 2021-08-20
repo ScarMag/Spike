@@ -587,7 +587,7 @@ void editorFind() {
 
       /* Places the cursor where the match is */
       E.cy = i;
-      E.cx = editorRowRxToCx(row, match - row-render);
+      E.cx = editorRowRxToCx(row, match - row->render);
 
       /* Causes editorScroll() to scroll up to where the 
        * cursor is (at the match), placing the matching line
