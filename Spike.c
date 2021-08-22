@@ -524,7 +524,7 @@ void editorSave() {
 
   /* Checks if it is a new file */
   if (E.filename == NULL) {
-    E.filename = editorPrompt("Save as: %s (ESC to cancel)");
+    E.filename = editorPrompt("Save as: %s (ESC to cancel)", NULL);
 
     /* Handles a possible return value of NULL from editorPrompt()
      * due to the user inputting Escape */
@@ -571,7 +571,7 @@ void editorSave() {
 void editorFind() {
 
   /* Prompts user for search query */
-  char *query = editorPrompt("Search: %s (ESC to cancel)");
+  char *query = editorPrompt("Search: %s (ESC to cancel)", NULL);
   if (query == NULL) return;
 
   int i;
