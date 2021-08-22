@@ -77,7 +77,7 @@ struct editorConfig E;
 
 void editorSetStatusMessage(const char *fmt, ...);
 void editorRefreshScreen();
-char *editorPrompt(char *prompt);
+char *editorPrompt(char *prompt, void (*callback)(char *, int));
 
 /* =============== Terminal =============== */
 
@@ -806,8 +806,11 @@ void editorSetStatusMessage(const char *fmt, ...) {
 /* =============== Input =============== */
 
 /* Displays a prompt in the status bar, and also allows
- * for the user to input a line of text */
-char *editorPrompt(char *prompt) {
+ * for the user to input a line of text. Uses a callback 
+ * function as an argument, which is called after each 
+ * keypress. The current search query + the last key
+ * inputted by the user are passed into the callback */
+char *editorPrompt(char *prompt, void (*callback)(char *, int)) {
   size_t bufsize = 128;
   char *buf = malloc(bufsize);
 
@@ -831,6 +834,7 @@ char *editorPrompt(char *prompt) {
     /* Cancels input prompt if user inputs Escape */
     } else if (c == '\x1b') {               /* Escape key */
       editorSetStatusMessage("");
+      if (callback) callback(buf, c);
       free(buf);
       return NULL;     
     } else if (c == '\r') {          /* Enter key */
@@ -839,6 +843,10 @@ char *editorPrompt(char *prompt) {
        * message and returns what was typed */
       if (buflen != 0) {
 	editorSetStatusMessage("");
+
+	/* Allows caller to pass NULL for the callback 
+	 * so that it is not used */
+	if (callback) callback(buf, c);
 	return buf;
       }
     } else if (!iscntrl(c) && c < 128) {    /* No special keys */
@@ -852,6 +860,8 @@ char *editorPrompt(char *prompt) {
       buf[buflen++] = c;
       buf[buflen] = '\0';
     }
+    
+    if (callback) callback(buf, c);
   }
 }
 
