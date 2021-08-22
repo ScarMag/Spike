@@ -567,19 +567,21 @@ void editorSave() {
 
 /* =============== Find =============== */
 
-/* Allows user to search a file */
-void editorFind() {
+/* Callback function for editorPrompt(...) that searches
+ * for the current query string */
+void editorFindCallback(char *query, int key) {
 
-  /* Prompts user for search query */
-  char *query = editorPrompt("Search: %s (ESC to cancel)", NULL);
-  if (query == NULL) return;
+  /* If the user presses Enter or Escape, return */
+  if (key == '\r' || key == '\x1b') {
+    return;
+  }
 
   int i;
   for (i = 0; i < E.numrows; i++) {
     erow *row = &E.row[i];
 
     /* Checks if query is a substring of the current row.
-     * Returns NULL if there is no match, and returns a 
+     * Returns NULL if there is no match, and returns a
      * pointer to the matching substring if there is a match */
     char *match = strstr(row->render, query);
 
@@ -589,15 +591,24 @@ void editorFind() {
       E.cy = i;
       E.cx = editorRowRxToCx(row, match - row->render);
 
-      /* Causes editorScroll() to scroll up to where the 
+      /* Causes editorScroll() to scroll up to where the
        * cursor is (at the match), placing the matching line
        * at the very top of the screen */
       E.rowoff = E.numrows;
       break;
     }
   }
+}
 
-  free(query);
+/* Allows user to search a file by calling editorFindCallback() */
+void editorFind() {
+
+  /* Prompts user for search query */
+  char *query = editorPrompt("Search: %s (ESC to cancel)", editorFindCallback);
+  
+  if (query) {
+    free(query);
+  }
 }
 
 /* =============== Append Buffer =============== */
