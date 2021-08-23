@@ -571,9 +571,29 @@ void editorSave() {
  * for the current query string */
 void editorFindCallback(char *query, int key) {
 
-  /* If the user presses Enter or Escape, return */
+  /* Stores the index of the row that the last match was
+   * on, or -1 if there was no last match */
+  static int last_match = -1;
+
+  /* Stores the direction of the search (1 for searching
+   * forward and -1 for searching backward */ 
+  static int direction = 1;
+  
+  /* If the user presses Enter or Escape, return.
+   * Always resets last_match to -1 unless an arrow key
+   * is pressed. Always set direction to 1 unless the left
+   * or up arrow keys are pressed */
   if (key == '\r' || key == '\x1b') {
+    last_match = -1;
+    direction = 1;
     return;
+  } else if (key == ARROW_RIGHT || key == ARROW_DOWN) {
+    direction = 1;      /* Searching forward */
+  } else if (key == ARROW_LEFT || key == ARROW_UP) {
+    direction = -1;     /* Searching backward */
+  } else {
+    last_match = -1;    /* No last match */
+    direction = 1;      /* Searching forward */
   }
 
   int i;
