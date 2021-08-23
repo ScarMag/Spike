@@ -602,12 +602,23 @@ void editorFindCallback(char *query, int key) {
 
 /* Allows user to search a file by calling editorFindCallback() */
 void editorFind() {
-
+  int saved_cx = E.cx;
+  int saved_cy = E.cy;
+  int saved_coloff = E.coloff;
+  int saved_rowoff = E.rowoff;
+  
   /* Prompts user for search query */
   char *query = editorPrompt("Search: %s (ESC to cancel)", editorFindCallback);
   
   if (query) {
     free(query);
+  } else {
+
+    /* Restores cursor position when search is cancelled */
+    E.cx = saved_cx;
+    E.cy = saved_cy;
+    E.coloff = saved_coloff;
+    E.rowoff = saved_rowoff;
   }
 }
 
