@@ -596,9 +596,27 @@ void editorFindCallback(char *query, int key) {
     direction = 1;      /* Searching forward */
   }
 
+  /* If there was not a last match, then the search starts 
+   * at the top of the file, in the forward direction. Otherwise,
+   * it starts on the line after/before (direction = 1 or -1) */
+  if (last_match == -1) direction = 1;
+  int current = last_match;
+  
   int i;
   for (i = 0; i < E.numrows; i++) {
-    erow *row = &E.row[i];
+    current += direction;
+
+    /* If current is at the first line of the file and it
+     * is searching backwards (0 + (-1)), set current to the 
+     * second to last line of the file */
+    if (current == -1) current = E.numrows - 1;
+
+    /* If current is at the second to last line of the 
+     * file and it is searching forwards ((E.numrows - 1) + 1),
+     * set current to the first line of the file */
+    else if (current == E.numrows) current = 0;
+
+    erow *row = &E.row[current];
 
     /* Checks if query is a substring of the current row.
      * Returns NULL if there is no match, and returns a
@@ -606,9 +624,10 @@ void editorFindCallback(char *query, int key) {
     char *match = strstr(row->render, query);
 
     if (match) {
-
+      last_match = current;
+      
       /* Places the cursor where the match is */
-      E.cy = i;
+      E.cy = current;
       E.cx = editorRowRxToCx(row, match - row->render);
 
       /* Causes editorScroll() to scroll up to where the
