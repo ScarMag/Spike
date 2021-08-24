@@ -647,7 +647,7 @@ void editorFind() {
   int saved_rowoff = E.rowoff;
   
   /* Prompts user for search query */
-  char *query = editorPrompt("Search: %s (ESC to cancel)", editorFindCallback);
+  char *query = editorPrompt("Search: %s (Use ESC/Arrows/Enter)", editorFindCallback);
   
   if (query) {
     free(query);
