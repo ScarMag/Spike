@@ -720,7 +720,8 @@ void editorScroll() {
   }
 }
 
-/* Writes out to the user's file */
+/* Writes out to the user's file and/or displays the content
+ * of the file */
 void editorDrawRows(struct abuf *ab) {
   int y;
   for (y = 0; y < E.screenrows; y++) {
@@ -754,7 +755,22 @@ void editorDrawRows(struct abuf *ab) {
       int len = E.row[filerow].rsize - E.coloff;
       if (len < 0) len = 0;
       if (len > E.screencols) len = E.screencols;
-      abAppend(ab, &E.row[filerow].render[E.coloff], len);
+
+      /* Now rendering/printing character-by-character */
+      char *c = &E.row[filerow].render[E.coloff];
+      int j;
+      for (j = 0; j < len; j++) {
+
+	/* If the char is a digit, then change its color to red
+	 * and print it. Else, just print it */
+	if (isdigit(c[j])) {
+	  abAppend(ab, "\x1b[31m", 5);    /* Sets text color to red */
+	  abAppend(ab, &c[j], 1);
+	  abAppend(ab, "\x1b[39m", 5);    /* Sets text color to default */
+	} else {
+	  abAppend(ab, &c[j], 1);
+	}
+      }
     }
     
     abAppend(ab, "\x1b[K", 3);    /* Erases part of the current line */
