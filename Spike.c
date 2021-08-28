@@ -50,8 +50,9 @@ enum editorKey {
 typedef struct erow {    
   int size;
   int rsize;
-  char *chars;
+  char *chars;          /* Array of chars */
   char *render;
+  unsigned char *hl;    /* highlight, array of unsigned chars */
 } erow;
 
 /* Stores the state of the editor */
@@ -63,8 +64,8 @@ struct editorConfig {
   int screenrows;
   int screencols;
   int numrows;
-  erow *row;                      /* Pointer to an array of erow structs */
-  int dirty;                      /* Text loaded in editor != file contents */
+  erow *row;                      /* Array of erow structs */
+  int dirty;                      /* When text loaded in editor != file contents */
   char *filename;
   char statusmsg[80];
   time_t statusmsg_time;
@@ -307,6 +308,7 @@ void editorInsertRow(int at, char *s, size_t len) {
 
   E.row[at].rsize = 0;
   E.row[at].render = NULL;
+  E.row[at].hl = NULL;
   editorUpdateRow(&E.row[at]);
   
   E.numrows++;
@@ -317,6 +319,7 @@ void editorInsertRow(int at, char *s, size_t len) {
 void editorFreeRow(erow *row) {
   free(row->render);
   free(row->chars);
+  free(row->hl);
 }
 
 /* Deletes an erow at a given position */
