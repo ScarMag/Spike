@@ -42,6 +42,13 @@ enum editorKey {
   PAGE_DOWN
 };
 
+/* Contains the possible values that the hl (highlight)
+ * array can contain */
+enum editorHighlight {
+  HL_NORMAL = 0,
+  HL_NUMBER
+};
+
 /* =============== Data =============== */
 
 /* Data type for storing a row of text in the editor. 
