@@ -227,6 +227,31 @@ int getWindowSize(int *rows, int *cols) {
   }
 }
 
+/* =============== Syntax Highlighting =============== */
+
+/* Iterates through the characters of an erow and sets their
+ * type in the hl (highlight) array */
+void editorUpdateSyntax(erow *row) {
+
+  /* Reallocates a block of memory the size of the row's
+   * render array */
+  row->hl = realloc(row->hl, row->rsize);
+
+  /* Sets all characters in the hl array to HL_NORMAL */ 
+  memset(row->hl, HL_NORMAL, row->rsize);
+
+  int i;
+  for (i = 0; i < row->rsize; i++) {
+
+    /* Sets the digits in the render array to HL_NUMBER 
+     * in the hl array */
+    if (isdigit(row->render[i])) {
+      row->hl[i] = HL_NUMBER;
+    }
+  }
+}
+
+
 /* =============== Row Operations =============== */
 
 /* Converts a chars index into a render index */
