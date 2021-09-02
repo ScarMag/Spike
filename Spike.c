@@ -315,6 +315,9 @@ void editorUpdateRow(erow *row) {
   }
   row->render[index] = '\0';
   row->rsize = index;
+
+  /* Called after updating the render array */
+  editorUpdateSyntax(row);
 }
 
 /* Inserts a row at the given index */
