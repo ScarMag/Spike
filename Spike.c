@@ -243,7 +243,7 @@ void editorUpdateSyntax(erow *row) {
   int i;
   for (i = 0; i < row->rsize; i++) {
 
-    /* Sets the digits in the render array to HL_NUMBER 
+    /* Maps the digits in the render array to HL_NUMBER 
      * in the hl array */
     if (isdigit(row->render[i])) {
       row->hl[i] = HL_NUMBER;
@@ -251,6 +251,14 @@ void editorUpdateSyntax(erow *row) {
   }
 }
 
+/* Maps the values in the hl array to the color codes
+ * to be used, accordingly */
+int editorSyntaxToColor(int hl) {
+  switch (hl) {
+    case HL_NUMBER: return 31;    /* Sets text color to red */
+    default: return 37;           /* Sets text color to white */
+  }
+}
 
 /* =============== Row Operations =============== */
 
