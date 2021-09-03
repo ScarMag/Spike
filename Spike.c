@@ -806,23 +806,33 @@ void editorDrawRows(struct abuf *ab) {
       /* Now rendering/printing character-by-character */
       char *c = &E.row[filerow].render[E.coloff];
 
-      /* Pointer to the char that corresponds to c */
+      /* Pointer to the char in the hl array that 
+       * corresponds to c */
       unsigned char *hl = &E.row[filerow].hl[E.coloff];
+
+      /* -1 refers to the default text color */
+      int current_color = -1;
       int j;
       for (j = 0; j < len; j++) {
 	if (hl[j] == HL_NORMAL) {
-	  abAppend(ab, "\x1b[39m", 5);    /* Sets text color to default */
+	  if (current_color != -1) {
+	    abAppend(ab, "\x1b[39m", 5);    /* text color = default */
+	    current_color = -1;
+	  }
 	  abAppend(ab, &c[j], 1);
 	} else {
 
 	  /* Sets color to the ANSI color code of hl[j] */
 	  int color = editorSyntaxToColor(hl[j]);
-	  char buf[16];
+	  if (color != current_color) {
+	    current_color = color;
+	    char buf[16];
 
-	  /* Writes the appropriate escape sequence for 
-	   * the color needed into buf */
-	  int clen = snprintf(buf, sizeof(buf), "\x1b[%m", color);
-	  abAppend(ab, buf, clen);
+	    /* Writes the appropriate escape sequence for 
+	     * the color needed into buf */
+	    int clen = snprintf(buf, sizeof(buf), "\x1b[%dm", color);
+	    abAppend(ab, buf, clen);
+	  }
 	  abAppend(ab, &c[j], 1);
 	}
       }
