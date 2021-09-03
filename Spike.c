@@ -778,7 +778,8 @@ void editorDrawRows(struct abuf *ab) {
       if (E.numrows == 0 && y == E.screenrows / 3) {
 	char welcome[80];
 	int welcomelen = snprintf(welcome, sizeof(welcome),
-				  "Spike editor -- version %s", SPIKE_VERSION);
+				  "Spike editor -- version %s",
+				  SPIKE_VERSION);
 
 	/* Truncates the length of the string to make sure it fits 
 	 * in the terminal */
@@ -804,19 +805,28 @@ void editorDrawRows(struct abuf *ab) {
 
       /* Now rendering/printing character-by-character */
       char *c = &E.row[filerow].render[E.coloff];
+
+      /* Pointer to the char that corresponds to c */
+      unsigned char *hl = &E.row[filerow].hl[E.coloff];
       int j;
       for (j = 0; j < len; j++) {
-
-	/* If the char is a digit, then change its color to red
-	 * and print it. Else, just print it */
-	if (isdigit(c[j])) {
-	  abAppend(ab, "\x1b[31m", 5);    /* Sets text color to red */
-	  abAppend(ab, &c[j], 1);
+	if (hl[j] == HL_NORMAL) {
 	  abAppend(ab, "\x1b[39m", 5);    /* Sets text color to default */
+	  abAppend(ab, &c[j], 1);
 	} else {
+
+	  /* Sets color to the ANSI color code of hl[j] */
+	  int color = editorSyntaxToColor(hl[j]);
+	  char buf[16];
+
+	  /* Writes the appropriate escape sequence for 
+	   * the color needed into buf */
+	  int clen = snprintf(buf, sizeof(buf), "\x1b[%m", color);
+	  abAppend(ab, buf, clen);
 	  abAppend(ab, &c[j], 1);
 	}
       }
+      abAppend(ab, "\x1b[39m", 5);
     }
     
     abAppend(ab, "\x1b[K", 3);    /* Erases part of the current line */
