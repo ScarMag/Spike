@@ -46,7 +46,8 @@ enum editorKey {
  * array can contain */
 enum editorHighlight {
   HL_NORMAL = 0,
-  HL_NUMBER
+  HL_NUMBER,
+  HL_MATCH
 };
 
 /* =============== Data =============== */
@@ -255,8 +256,9 @@ void editorUpdateSyntax(erow *row) {
  * codes to be used, accordingly */
 int editorSyntaxToColor(int hl) {
   switch (hl) {
-    case HL_NUMBER: return 31;    /* Sets text color to red */
-    default: return 37;           /* Sets text color to white */
+    case HL_NUMBER: return 31;    /* text color = red */
+    case HL_MATCH: return 43;     /* background color = yellow */
+    default: return 37;           /* text color = white */
   }
 }
 
