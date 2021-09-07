@@ -626,6 +626,24 @@ void editorFindCallback(char *query, int key) {
   /* Stores the direction of the search (1 for searching
    * forward and -1 for searching backward */ 
   static int direction = 1;
+
+  /* Stores the line number of the line that needs its
+   * hl array to be restored */
+  static int saved_hl_line;
+
+  /* Stores the contents of the hl array of a line that 
+   * has been modified by highlighting search results. 
+   * Points to NULL when there is nothing to restore */ 
+  static char *saved_hl = NULL;
+
+  /* If there is something to restore (saved_hl is not NULL),
+   * then the saved hl array is used to overwrite the 
+   * current hl array of the saved line using memcpy() */
+  if (saved_hl) {
+    memcpy(E.row[saved_hl_line].hl, saved_hl, E.row[saved_hl_line].rsize);
+    free(saved_hl);
+    saved_hl = NULL;
+  }
   
   /* If the user presses Enter or Escape, return.
    * Always resets last_match to -1 unless an arrow key
@@ -683,8 +701,14 @@ void editorFindCallback(char *query, int key) {
        * at the very top of the screen */
       E.rowoff = E.numrows;
 
-      /* Fills the hl array with the value of HL_MATCH based
-       * on the index of the match in the render array and 
+      saved_hl_line = current;
+      saved_hl = malloc(row->rsize);
+
+      /* Copies the hl array of the current row into saved_hl */
+      memcpy(saved_hl, row->hl, row->rsize);
+
+      /* Fills the hl array with the value of HL_MATCH according
+       * to the index of the match in the render array and 
        * the length of the query */ 
       memset(&row->hl[match - row->render], HL_MATCH, strlen(query));
       break;
