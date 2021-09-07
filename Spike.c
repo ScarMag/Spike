@@ -257,7 +257,7 @@ void editorUpdateSyntax(erow *row) {
 int editorSyntaxToColor(int hl) {
   switch (hl) {
     case HL_NUMBER: return 31;    /* text color = red */
-    case HL_MATCH: return 43;     /* background color = yellow */
+    case HL_MATCH: return 33;     /* text color = yellow */
     default: return 37;           /* text color = white */
   }
 }
@@ -682,6 +682,11 @@ void editorFindCallback(char *query, int key) {
        * cursor is (at the match), placing the matching line
        * at the very top of the screen */
       E.rowoff = E.numrows;
+
+      /* Fills the hl array with the value of HL_MATCH based
+       * on the index of the match in the render array and 
+       * the length of the query */ 
+      memset(&row->hl[match - row->render], HL_MATCH, strlen(query));
       break;
     }
   }
