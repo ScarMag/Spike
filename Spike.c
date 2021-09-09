@@ -241,14 +241,17 @@ void editorUpdateSyntax(erow *row) {
   /* Sets all characters in the hl array to HL_NORMAL */ 
   memset(row->hl, HL_NORMAL, row->rsize);
 
-  int i;
-  for (i = 0; i < row->rsize; i++) {
-
+  int i = 0;
+  while (i < row->rsize) {
+    char c = row->render[i];
+    
     /* Maps the digits in the render array to HL_NUMBER 
      * in the hl array */
-    if (isdigit(row->render[i])) {
+    if (isdigit(c)) {
       row->hl[i] = HL_NUMBER;
     }
+    
+    i++;
   }
 }
 
