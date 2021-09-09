@@ -230,6 +230,16 @@ int getWindowSize(int *rows, int *cols) {
 
 /* =============== Syntax Highlighting =============== */
 
+/* Takes in a character and returns true if the character
+ * is considered a separator character */
+int is_separator(int c) {
+  
+  /* strchr(const char *str, int c) accepts a string and
+   * a char and returns a pointer to the first occurrence
+   * of c in str[] */
+  return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];", c) != NULL;
+}
+
 /* Iterates through the characters of an erow and sets their
  * type in the hl (highlight) array */
 void editorUpdateSyntax(erow *row) {
